@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIL VoiceBot · Evaluación Masiva con Llamadas Reales</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 32px;border-bottom:1px solid #475569}
+.header h1{font-size:24px;font-weight:700;color:#f8fafc}
+.header p{color:#94a3b8;margin-top:4px;font-size:14px}
+.container{max-width:1400px;margin:0 auto;padding:24px}
+.grid{display:grid;gap:20px;margin-bottom:24px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.card{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155}
+.card h3{font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.card h4{font-size:15px;color:#f8fafc;margin-bottom:8px}
+.stat{font-size:32px;font-weight:700}
+.stat.green{color:#22c55e}.stat.yellow{color:#eab308}.stat.red{color:#ef4444}
+.stat.blue{color:#3b82f6}.stat.purple{color:#a855f7}
+.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600}
+.badge-green{background:#166534;color:#bbf7d0}.badge-yellow{background:#854d0e;color:#fef08a}
+.badge-red{background:#991b1b;color:#fecaca}.badge-blue{background:#1e40af;color:#bfdbfe}
+.badge-purple{background:#581c87;color:#e9d5ff}
+.chart-card{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155}
+.chart-card h3{font-size:16px;color:#f8fafc;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #334155;font-size:13px}
+th{color:#94a3b8;font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px}
+td{color:#e2e8f0}
+.tab-container{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;
+     background:#334155;color:#94a3b8;border:none;transition:all .2s}
+.tab.active{background:#a855f7;color:#fff}
+.tab:hover:not(.active){background:#475569;color:#e2e8f0}
+.section{display:none}.section.active{display:block}
+.tool-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.tool-badge.opik{background:#3b82f620;color:#3b82f6}
+.tool-badge.deepeval{background:#22c55e20;color:#22c55e}
+.tool-badge.langsmith{background:#a855f720;color:#a855f7}
+.legend-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #334155}
+.legend-item:last-child{border-bottom:none}
+.legend-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.legend-text h4{font-size:14px;color:#f8fafc;margin-bottom:2px}
+.legend-text p{font-size:12px;color:#94a3b8;line-height:1.4}
+.step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #334155}
+.step:last-child{border-bottom:none}
+.step-num{width:36px;height:36px;border-radius:50%;background:#a855f7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.step-text h4{font-size:14px;color:#f8fafc;margin-bottom:4px}
+.step-text p{font-size:13px;color:#94a3b8;line-height:1.5}
+@media(max-width:768px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}.container{padding:12px}.header{padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>📞 GAIL VoiceBot · Evaluación Masiva con Llamadas Reales</h1>
+<p>45 llamadas reales · 15 campañas outbound · 7 reglas heurísticas + 7 con juez LLM · qwen2.5:7b local · Generado 2026-09-01 11:32</p>
+</div>
+
+<div class="container">
+<div class="tab-container">
+<button class="tab active" onclick="showTab('overview')">Overview</button>
+<button class="tab" onclick="showTab('metrics')">Métricas</button>
+<button class="tab" onclick="showTab('campanas')">Campañas</button>
+<button class="tab" onclick="showTab('calls')">Llamadas</button>
+<button class="tab" onclick="showTab('pruebas')">Pruebas</button>
+</div>
+
+<!-- ═══════════ OVERVIEW ═══════════ -->
+<div id="overview" class="section active">
+<div class="grid grid-4" style="margin-bottom:20px">
+<div class="card"><h3>Score Heurísticas</h3><div class="stat yellow">53</div><span class="badge badge-yellow">7 reglas · sin IA</span></div>
+<div class="card"><h3>Score LLM (Juez IA)</h3><div class="stat red">47</div><span class="badge badge-red">7 reglas · qwen2.5:7b</span></div>
+<div class="card"><h3>Outcome Positivo</h3><div class="stat green">0%</div><span class="badge badge-blue">answered / interesado…</span></div>
+<div class="card"><h3>Duración Promedio</h3><div class="stat" style="color:#f8fafc">149s</div><span class="badge badge-purple">por llamada</span></div>
+</div>
+
+<div class="grid grid-2">
+<div class="chart-card"><h3>Score Heurístico por Métrica</h3><canvas id="chartHeur"></canvas></div>
+<div class="chart-card"><h3>Score LLM por Métrica</h3><canvas id="chartLLM"></canvas></div>
+</div>
+
+<div class="grid grid-2" style="margin-top:20px">
+<div class="chart-card"><h3>Heurísticas vs LLM por Métrica</h3><canvas id="chartCompare"></canvas></div>
+<div class="chart-card"><h3>Score por Campaña</h3><canvas id="chartCamp"></canvas></div>
+</div>
+</div>
+
+<!-- ═══════════ MÉTRICAS ═══════════ -->
+<div id="metrics" class="section">
+<div class="grid grid-2">
+<div class="card">
+<h3>⚙️ Heurísticas · promedio global (53)</h3>
+<table><tbody>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">👋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">se_presenta</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Se presenta como la marca</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:29%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">💬</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">menciona_proposito</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Explica el motivo de la llamada</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:27%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">27</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">✋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">pide_consentimiento</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Pide consentimiento para continuar</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:11%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">11</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">🚫</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">maneja_no_interes</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Maneja el 'no me interesa' cortésmente</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:100%;height:100%;background:#22c55e;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#22c55e;font-weight:700;font-size:12px">100</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">📅</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">ofrece_agendar_cita</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Ofrece agendar cita / derivar a asesor</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:7%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">7</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">📋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">listado_max_3</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Lista máx. 3 propiedades a la vez</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:100%;height:100%;background:#22c55e;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#22c55e;font-weight:700;font-size:12px">100</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">😊</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">tono_respetuoso</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Tono respetuoso, sin agresividad</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:100%;height:100%;background:#22c55e;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#22c55e;font-weight:700;font-size:12px">100</td>
+        </tr></tbody></table>
+</div>
+<div class="card">
+<h3>🤖 Reglas con juez LLM · promedio global (47)</h3>
+<table><tbody>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">👋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">se_presenta</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Se presenta como la marca</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:62%;height:100%;background:#eab308;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#eab308;font-weight:700;font-size:12px">62</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">💬</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">menciona_proposito</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Explica el motivo de la llamada</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:31%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">31</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">✋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">pide_consentimiento</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Pide consentimiento para continuar</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:34%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">34</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">🚫</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">maneja_no_interes</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Maneja el 'no me interesa' cortésmente</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:79%;height:100%;background:#22c55e;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#22c55e;font-weight:700;font-size:12px">79</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">📅</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">ofrece_agendar_cita</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Ofrece agendar cita / derivar a asesor</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:19%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">19</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">📋</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">listado_max_3</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Lista máx. 3 propiedades a la vez</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:17%;height:100%;background:#ef4444;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#ef4444;font-weight:700;font-size:12px">17</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px 10px;width:34px"><span style="font-size:16px">😊</span></td>
+          <td style="padding:8px 10px;color:#e2e8f0;font-weight:600">tono_respetuoso</td>
+          <td style="padding:8px 10px;color:#94a3b8;font-size:12px">Tono respetuoso, sin agresividad</td>
+          
+    <td style="padding:6px 4px;min-width:90px">
+      <div style="display:flex;align-items:center;width:90px">
+        <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+          <div style="width:86%;height:100%;background:#22c55e;border-radius:3px"></div>
+        </div>
+      </div>
+    </td>
+    <td style="color:#22c55e;font-weight:700;font-size:12px">86</td>
+        </tr></tbody></table>
+</div>
+</div>
+<div class="card" style="margin-top:20px">
+<h3>📊 Escala de Colores</h3>
+<div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:6px"><div style="width:16px;height:16px;border-radius:4px;background:#22c55e"></div><span style="font-size:13px">🟢 0.75 - 1.00: Cumple</span></div>
+<div style="display:flex;align-items:center;gap:6px"><div style="width:16px;height:16px;border-radius:4px;background:#eab308"></div><span style="font-size:13px">🟡 0.50 - 0.74: Parcial</span></div>
+<div style="display:flex;align-items:center;gap:6px"><div style="width:16px;height:16px;border-radius:4px;background:#ef4444"></div><span style="font-size:13px">🔴 0.00 - 0.49: No cumple</span></div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════ CAMPAÑAS ═══════════ -->
+<div id="campanas" class="section">
+<div class="card">
+<h3>📋 Resultados por Campaña</h3>
+<table>
+<thead><tr><th>Campaña</th><th style="text-align:center">Llamadas</th><th style="text-align:center">Heur</th><th style="text-align:center">LLM</th><th></th></tr></thead>
+<tbody>
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('TCA - Guias y manifiestos')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">TCA - Guias y manifiestos</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">10</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">46</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">40</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Grupo Proaco')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Grupo Proaco</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">7</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">61</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">48</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('PRUEBA-QA')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">PRUEBA-QA</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">6</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">60</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">48</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Cuscatlan - Campaña de prueba de extracción de datos')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Cuscatlan - Campaña de prueba de extracción de datos</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">4</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">61</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">61</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Cuscatlan - Campaña de prueba de extracción de datos 2')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Cuscatlan - Campaña de prueba de extracción de datos 2</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">3</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">57</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">60</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Campaña Demo')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Campaña Demo</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">2</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">31</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Cuscatlan - Campaña de prueba de extracción de datos 3')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Cuscatlan - Campaña de prueba de extracción de datos 3</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">2</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">57</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">61</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Cuscatlan - Campaña de prueba de extracción de datos 4')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Cuscatlan - Campaña de prueba de extracción de datos 4</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">2</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">57</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">52</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Campaña push notification')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Campaña push notification</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">2</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">50</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">39</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Test notis push')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Test notis push</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">2</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">34</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Campaña carol')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Campaña carol</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">1</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">57</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('campaña carol 2')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">campaña carol 2</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">1</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">57</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">50</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Campaña Extraccion de datos')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Campaña Extraccion de datos</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">1</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">71</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Campaña prueba de tiempo')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Campaña prueba de tiempo</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">1</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155;cursor:pointer" onclick="filtrarCampana('Demo notificaciones push')">
+          <td style="padding:10px 12px;color:#f8fafc;font-weight:600">Demo notificaciones push</td>
+          <td style="padding:10px 12px;text-align:center;color:#94a3b8">1</td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">43</span></td>
+          <td style="padding:10px 12px;text-align:center"><span class="badge badge-red">23</span></td>
+          <td style="padding:10px 12px;text-align:center;color:#334155">▸</td>
+        </tr></tbody>
+</table>
+<p style="color:#94a3b8;font-size:12px;margin-top:12px">Hacé clic en una campaña para filtrar el detalle por llamada.</p>
+</div>
+</div>
+
+<!-- ═══════════ LLAMADAS ═══════════ -->
+<div id="calls" class="section">
+<div class="card">
+<h3>📞 Detalle por Llamada (45)</h3>
+<table>
+<thead><tr><th>Contacto</th><th>Campaña</th><th>Outcome</th><th>Duración</th><th>Positivo</th><th>Heur</th><th>LLM</th></tr></thead>
+<tbody>
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Charli Garcia</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">do-not-call</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">49s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">24</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Rafaela Carra</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">too-short</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">8s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">204s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Rafaela Carra</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">41s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">54</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Valentina Pegrezt</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">320s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="PRUEBA-QA">
+          <td style="padding:8px 12px;color:#f8fafc">Tipito Enojado</td>
+          <td style="padding:8px 12px;color:#94a3b8">PRUEBA-QA</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">too-short</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">25s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña carol">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña carol</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">117s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="campaña carol 2">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">campaña carol 2</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">198s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">50</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña Extraccion de datos">
+          <td style="padding:8px 12px;color:#f8fafc">Joaquin Bogado</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña Extraccion de datos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">403s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña Demo">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña Demo</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">112s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">47</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña Demo">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña Demo</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">4s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">14</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos">
+          <td style="padding:8px 12px;color:#f8fafc">Gabriel Zorrilla</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">191s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos">
+          <td style="padding:8px 12px;color:#f8fafc">Israel Diego Lalo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">262s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">155s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">36</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos">
+          <td style="padding:8px 12px;color:#f8fafc">Fernanda Montanari</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">132s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">79</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 2">
+          <td style="padding:8px 12px;color:#f8fafc">Joaquin Bogado</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 2</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">612s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 2">
+          <td style="padding:8px 12px;color:#f8fafc">Carol Navia</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 2</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">219s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 2">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 2</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">191s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 3">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 3</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">314s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 3">
+          <td style="padding:8px 12px;color:#f8fafc">Joaquin Bogado</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 3</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">439s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 4">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 4</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">158s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Cuscatlan - Campaña de prueba de extracción de datos 4">
+          <td style="padding:8px 12px;color:#f8fafc">Israel Diego Lalo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Cuscatlan - Campaña de prueba de extracción de datos 4</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">286s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">61</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña prueba de tiempo">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña prueba de tiempo</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">50s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Diegote Lalo</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">8s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Israel Diego Lalo</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">225s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">50</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Nahuel Laporte</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">177s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">84s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">50</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Fernanda Montanari</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">87s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Gabriel Zorrilla</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">201s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">47</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Carol Navia</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">359s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">4s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">14</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Nahuel Laporte</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">4s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">14</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="TCA - Guias y manifiestos">
+          <td style="padding:8px 12px;color:#f8fafc">Fernanda Montanari</td>
+          <td style="padding:8px 12px;color:#94a3b8">TCA - Guias y manifiestos</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">3s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña push notification">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña push notification</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">107s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">50</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Campaña push notification">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Campaña push notification</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">voicemail</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">21s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Test notis push">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Test notis push</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">80s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">36</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Test notis push">
+          <td style="padding:8px 12px;color:#f8fafc">Joaquin Bogado</td>
+          <td style="padding:8px 12px;color:#94a3b8">Test notis push</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">53s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">33</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Demo notificaciones push">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Demo notificaciones push</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">62s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+          <td style="padding:8px 12px;color:#e2e8f0">23</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Benedetto</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">71s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">47</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Charli Garcia</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">do-not-call</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">49s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">24</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Rafaela Carra</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">too-short</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">8s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">29</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Marcelo Oviedo</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">204s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+          <td style="padding:8px 12px;color:#e2e8f0">71</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Rafaela Carra</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">41s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">54</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Valentina Pegrezt</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">other</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">320s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">64</td>
+        </tr>
+
+        <tr style="border-bottom:1px solid #334155" data-camp="Grupo Proaco">
+          <td style="padding:8px 12px;color:#f8fafc">Tipito Enojado</td>
+          <td style="padding:8px 12px;color:#94a3b8">Grupo Proaco</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">too-short</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">25s</td>
+          <td style="padding:8px 12px;text-align:center;font-size:13px">—</td>
+          <td style="padding:8px 12px;color:#e2e8f0">57</td>
+          <td style="padding:8px 12px;color:#e2e8f0">43</td>
+        </tr></tbody>
+</table>
+</div>
+</div>
+
+<!-- ═══════════ PRUEBAS ═══════════ -->
+<div id="pruebas" class="section">
+<div class="card" style="margin-bottom:20px">
+<h3>🧪 Pruebas Realizadas</h3>
+<table>
+<thead><tr><th>#</th><th>Prueba</th><th>Herramienta</th><th>Modelo</th><th>Llamadas</th><th>Métricas</th><th>Resultado</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>QA ficción (validación)</td><td><span class="tool-badge deepeval">Local</span></td><td>qwen2.5:7b</td><td>6</td><td>7</td><td><span class="badge badge-yellow">GLOBAL 0.469</span></td></tr>
+<tr><td>2</td><td>Llamadas reales GAIL</td><td><span class="tool-badge deepeval">Local</span></td><td>qwen2.5:7b</td><td>45</td><td>7 heur + 7 llm</td><td><span class="badge badge-yellow">53</span> heur · <span class="badge badge-red">47</span> llm</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="grid grid-3">
+<div class="card">
+<h3>✅ Pruebas de Conexión</h3>
+<table>
+<tr><td style="border:none">Lula API</td><td style="border:none;text-align:right"><span class="badge badge-green">OK</span></td></tr>
+<tr><td style="border:none">Ollama qwen2.5:7b</td><td style="border:none;text-align:right"><span class="badge badge-green">OK</span></td></tr>
+<tr><td style="border:none">Export transcripciones</td><td style="border:none;text-align:right"><span class="badge badge-green">45</span></td></tr>
+</table>
+</div>
+<div class="card">
+<h3>📊 Datos del Experimento</h3>
+<table>
+<tr><td style="border:none">Fecha</td><td style="border:none;text-align:right"><strong>2026-08-31</strong></td></tr>
+<tr><td style="border:none">Llamadas reales</td><td style="border:none;text-align:right"><strong>45</strong></td></tr>
+<tr><td style="border:none">Campañas</td><td style="border:none;text-align:right"><strong>15</strong></td></tr>
+<tr><td style="border:none">Total evaluaciones</td><td style="border:none;text-align:right"><strong>630</strong></td></tr>
+</table>
+</div>
+<div class="card">
+<h3>🏗️ Flujo del Sistema</h3>
+<div class="step"><div class="step-num">1</div><div class="step-text"><h4>Export Lula API</h4><p>Se bajan todas las campañas y transcripciones outbound de GAIL via API key.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-text"><h4>Evaluación</h4><p>7 heurísticas determinísticas + 7 reglas con juez LLM local (qwen2.5:7b), con rúbrica y CoT.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-text"><h4>Dashboard</h4><p>Agregación por llamada y campaña con score global.</p></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function showTab(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');event.target.classList.add('active')}
+
+function filtrarCampana(camp){
+  document.querySelectorAll('#calls tbody tr').forEach(tr=>{
+    tr.style.display = tr.dataset.camp === camp ? '' : 'none';
+  });
+  document.getElementById('calls').classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab')[3].classList.add('active');
+}
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#334155';
+const metricas = ["se_presenta", "menciona_proposito", "pide_consentimiento", "maneja_no_interes", "ofrece_agendar_cita", "listado_max_3", "tono_respetuoso"];
+const heur = [0.289, 0.267, 0.111, 1.0, 0.067, 1.0, 1.0];
+const llm = [0.622, 0.311, 0.344, 0.789, 0.189, 0.167, 0.858];
+const campNames = ["TCA - Guias y manifiestos", "Grupo Proaco", "PRUEBA-QA", "Cuscatlan - Campaña de prueba de extracción de datos", "Cuscatlan - Campaña de prueba de extracción de datos 2", "Campaña Demo", "Cuscatlan - Campaña de prueba de extracción de datos 3", "Cuscatlan - Campaña de prueba de extracción de datos 4", "Campaña push notification", "Test notis push", "Campaña carol", "campaña carol 2", "Campaña Extraccion de datos", "Campaña prueba de tiempo", "Demo notificaciones push"];
+const campHeur = [0.457, 0.612, 0.595, 0.607, 0.571, 0.429, 0.571, 0.571, 0.5, 0.429, 0.571, 0.571, 0.429, 0.429, 0.429];
+const campLLM = [0.404, 0.476, 0.476, 0.607, 0.595, 0.307, 0.607, 0.521, 0.393, 0.343, 0.429, 0.5, 0.714, 0.429, 0.229];
+
+new Chart(document.getElementById('chartHeur'),{type:'bar',data:{labels:metricas,datasets:[{label:'Heur',data:heur,backgroundColor:'#3b82f6'}]},options:{scales:{y:{min:0,max:1}}}});
+new Chart(document.getElementById('chartLLM'),{type:'bar',data:{labels:metricas,datasets:[{label:'LLM',data:llm,backgroundColor:'#a855f7'}]},options:{scales:{y:{min:0,max:1}}}});
+new Chart(document.getElementById('chartCompare'),{type:'bar',data:{labels:metricas,datasets:[{label:'Heur',data:heur,backgroundColor:'#3b82f6'},{label:'LLM',data:llm,backgroundColor:'#a855f7'}]},options:{scales:{y:{min:0,max:1}}}});
+new Chart(document.getElementById('chartCamp'),{type:'bar',data:{labels:campNames,datasets:[{label:'Heur',data:campHeur,backgroundColor:'#3b82f6'},{label:'LLM',data:campLLM,backgroundColor:'#a855f7'}]},options:{indexAxis:'y',scales:{x:{min:0,max:1}}}});
+</script>
+</body>
+</html>

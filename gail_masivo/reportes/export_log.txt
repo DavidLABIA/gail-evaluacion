@@ -1,0 +1,28 @@
+[17:00:12] HTTP 401 (bloqueo) intento 1 → reintento en 120s
+[17:02:12] HTTP 401 (bloqueo) intento 2 → reintento en 120s
+[17:04:13] HTTP 401 (bloqueo) intento 3 → reintento en 120s
+[17:06:14] HTTP 401 (bloqueo) intento 4 → reintento en 120s
+[17:08:14] HTTP 401 (bloqueo) intento 5 → reintento en 120s
+[17:10:15] HTTP 401 (bloqueo) intento 6 → reintento en 120s
+[17:12:15] HTTP 401 (bloqueo) intento 7 → reintento en 120s
+[17:14:16] HTTP 401 (bloqueo) intento 8 → reintento en 120s
+[17:16:16] HTTP 401 (bloqueo) intento 9 → reintento en 120s
+[17:18:17] HTTP 401 (bloqueo) intento 10 → reintento en 120s
+[17:20:17] HTTP 401 (bloqueo) intento 11 → reintento en 120s
+[17:22:38] HTTP 401 (bloqueo) intento 12 → reintento en 120s
+[17:44:37] HTTP 401 (bloqueo) intento 13 → reintento en 120s
+[17:46:38] HTTP 401 (bloqueo) intento 14 → reintento en 120s
+[18:18:43] HTTP 401 (bloqueo) intento 15 → reintento en 120s
+[18:20:44] HTTP 401 (bloqueo) intento 16 → reintento en 120s
+[18:52:44] HTTP 401 (bloqueo) intento 17 → reintento en 120s
+[19:09:45] HTTP 401 (bloqueo) intento 18 → reintento en 120s
+[19:38:03] HTTP 401 (bloqueo) intento 19 → reintento en 120s
+[19:55:03] HTTP 401 (bloqueo) intento 20 → reintento en 120s
+[19:57:04] HTTP 401 (bloqueo) intento 21 → reintento en 120s
+[20:14:06] HTTP 401 (bloqueo) intento 22 → reintento en 120s
+[20:23:04] HTTP 401 (bloqueo) intento 23 → reintento en 120s
+[20:40:05] HTTP 401 (bloqueo) intento 24 → reintento en 120s
+[21:07:59] HTTP 401 (bloqueo) intento 25 → reintento en 120s
+[21:24:04] HTTP 401 (bloqueo) intento 26 → reintento en 120s
+[21:52:27] respuesta inesperada HTTP ERR Remote end closed connection without response en intento 27 → corriendo export
+[07:03:01] export finalizado
