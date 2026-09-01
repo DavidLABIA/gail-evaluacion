@@ -1,0 +1,1683 @@
+{
+  "herramienta": "DeepEval-juez",
+  "modelo": "ollama/qwen2.5:7b",
+  "tipo": "outbound",
+  "n_llamadas": 45,
+  "promedios": {
+    "se_presenta": 0.522,
+    "menciona_proposito": 0.289,
+    "pide_consentimiento": 0.433,
+    "maneja_no_interes": 0.633,
+    "ofrece_agendar_cita": 0.311,
+    "listado_max_3": 0.178,
+    "tono_respetuoso": 0.947
+  },
+  "global_avg": 0.473,
+  "llamadas": [
+    {
+      "id": "CA18a4abd08ab9818405d44a7e4c1b910f",
+      "campaign": "PRUEBA-QA",
+      "outcome": "do-not-call",
+      "contacto": "Charli Garcia",
+      "avg": 0.257,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' al inicio de la llamada en lugar de usar el nombre completo de la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La conversación comienza con un saludo general y no se menciona ningún motivo específico para la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot intenta preguntar si es buen momento para continuar con la frase 'Disculpame, no te escuché bien. ¿Podrías repetir eso, por favor? Quizás hablando un poco más cerca del micrófono.', pero esta no se presenta de manera explícita y el flujo continúa directamente después."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot intenta escuchar de nuevo pero luego insiste una vez con 'No mejor, hay más', lo que podría ser interpretado como un poco agobiante para el cliente."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción para agendar una cita o derivar al asesor después de que el cliente expresa claramente su deseo de terminar la conversación."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot intentó listar propiedades pero la conversación se interrumpió prematuramente debido a la insatisfacción del cliente. No se realizaron listados de propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 0.3,
+          "reason": "El bot mantiene un tono respetuoso al principio y durante la mayor parte de la transcripción, pero pierde puntos cuando el cliente se vuelve agresivo y el bot responde con una petición para hablar más cerca del micrófono en lugar de manejar la situación con calma. Además, la respuesta final del cliente es claramente agresiva."
+        }
+      }
+    },
+    {
+      "id": "CA1cc4b3a43b1c81376115825d86c44622",
+      "campaign": "PRUEBA-QA",
+      "outcome": "too-short",
+      "contacto": "Rafaela Carra",
+      "avg": 0.214,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' en lugar de identificarse con la marca completa al inicio de la llamada."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no hace una pregunta explícita ni implícita sobre si es un buen momento para continuar la llamada. Inmediatamente pasa a preguntar sobre qué puede ayudarlo."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot no responde al cliente cuando dice 'no me interesa' y continúa con su enfoque inicial de presentación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar al asesor, solo presenta un saludo inicial sin profundizar en opciones de atención."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no listó ninguna propiedad ya que la conversación aún está en el saludo inicial y no se ha determinado qué tipo de ayuda necesita el cliente."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés al iniciar la conversación con el cliente."
+        }
+      }
+    },
+    {
+      "id": "CA19ee8401e82785291c1d6e2bceb6d77d",
+      "campaign": "PRUEBA-QA",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente como 'Proaco' al inicio de la conversación, cumpliendo con el criterio establecido."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero la comunicación es interrumpida y ambigua debido a problemas de comprensión del cliente. El bot finalmente logra clarificar que está buscando departamentos, pero no inicia con una explicación clara y directa sobre el motivo de la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, permite que el cliente termine de hablar y responde a sus preguntas e inquietudes de manera adecuada."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez después de que el cliente dice 'No encontré', pero cierra cortésmente al final sin insistir más."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de agendar una cita o revisar propiedades en línea, pero no concreta ninguna acción específica."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot intentó listar departamentos pero no pudo hacerlo debido a un inconveniente técnico. Aunque el lead expresó que no encontró resultados, el bot podría haber finalizado más rápidamente en lugar de ofrecer una solución alternativa y luego volver a intentarlo."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de las dificultades para entender al cliente en algunos momentos, el bot siempre se muestra paciente y atento, solicitando repeticiones claras cuando es necesario."
+        }
+      }
+    },
+    {
+      "id": "CAc57514332ee76b2150ec583f8a86735b",
+      "campaign": "PRUEBA-QA",
+      "outcome": "other",
+      "contacto": "Rafaela Carra",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' en lugar de la marca específica."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al ofrecer ayuda con la compra de una casa, pero no es muy claro o directo en su explicación inicial."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En su lugar, pasa directamente a preguntar sobre las preferencias del cliente sin esperar una respuesta de si puede seguir."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot insiste dos veces con el cliente cuando este expresa claramente que no quiere seguir la conversación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de listar algunas opciones de casas pero no concreta en agendar una cita o derivar al asesor."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot lista más de 3 propiedades sin que el cliente haya solicitado específicamente una cantidad, y no se evidencia que las propiedades estén filtradas según la zona o tipo de casa que el cliente haya expresado."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "CAd7af8dc9b388be471478d07f0b379b7d",
+      "campaign": "PRUEBA-QA",
+      "outcome": "other",
+      "contacto": "Valentina Pegrezt",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente al inicio de la llamada como 'Proaco', cumpliendo con el criterio de presentación de marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. Solo inicia conversando con el cliente sin proporcionar información sobre qué tipo de ayuda o información se va a brindar."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar la llamada. En cambio, continúa con la información sin esperar una respuesta del cliente sobre si puede seguir o no."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste varias veces para obtener una respuesta clara del cliente, lo que puede ser considerado molesto. Sin embargo, finalmente cierra la conversación de manera cortés cuando el cliente indica que no necesita más información."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de agendar cita/visita al final de la conversación, pero no concreta esta acción ni ofrece derivar al asesor."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot lista más de tres propiedades (se listan seis) y algunas de ellas no cumplen con la solicitud del lead (tres habitaciones), por ejemplo, el proyecto 'Departamentos Torre 03 - 2027' que tiene 3 baños en lugar de 3 dormitorios. Además, el bot debería haber detenido la lista después de tres propiedades y preguntado al cliente si quería más detalles sobre alguna de las opciones presentadas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de algunos problemas con la claridad en la comunicación, el bot se esfuerza por entender al cliente y proporciona información de manera profesional."
+        }
+      }
+    },
+    {
+      "id": "CAf8fa6d0fc16e2c0ae1208556778cbd2f",
+      "campaign": "PRUEBA-QA",
+      "outcome": "too-short",
+      "contacto": "Tipito Enojado",
+      "avg": 0.214,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente como 'parte del equipo de Grupo Proaco', sin identificarse directamente con la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada, simplemente presenta una saludo genérico sin proporcionar información sobre por qué se está contactando al cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no pregunta explícitamente si es buen momento o puede continuar la llamada. Continúa directamente con su mensaje sin solicitar permiso del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El cliente colgó sin dar una respuesta clara y el bot no tuvo la oportunidad de reaccionar o cerrar la conversación de manera cortés."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor, ya que el cliente colgó inmediatamente."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El lead colgó la llamada sin que el bot pudiera listar ninguna propiedad, por lo tanto, no se cumplió con el criterio de listar propiedades correctas o incorrectas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la interacción, utilizando un saludo amable y una pregunta educada antes de finalizar la llamada."
+        }
+      }
+    },
+    {
+      "id": "019ebd23-9a6c-7c96-8230-e0b80ef074d9-019ebd23-b937-7a31-b768-a879b626db68",
+      "campaign": "Campaña carol",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.429,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada sin mencionar directamente la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. No se menciona explícitamente que es una prueba para el workflow de extracción de datos hasta después del primer intento de comunicación."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar la conversación. En cambio, intenta continuar directamente después de recibir información del cliente, pero luego realiza una pausa y solicita que se repita el mensaje, lo cual puede interpretarse como un intento implícito de asegurarse de que sea un buen momento para seguir."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez al final de la conversación para confirmar si el cliente necesita algo más, pero luego cierra cortésmente sin insistir más."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor en ningún momento de la transcripción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que la conversación se centra en responder preguntas sobre el truco de naipes y no menciona ni sugiere propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando el cliente no puede ser escuchado claramente, el bot solicita una repetición de manera amable."
+        }
+      }
+    },
+    {
+      "id": "019ebd2f-5a9d-7226-80c1-5c7fe069fbcf-019ebd2f-7031-7f59-866e-d2fcbeac3db1",
+      "campaign": "campaña carol 2",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente como la marca al inicio de la llamada con las palabras 'esto es un llamado de prueba para el workflow de extracción de datos', cumpliendo así con el criterio establecido."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al principio, pero la conversación se desvió hacia una discusión sobre el juego de truco 'truco', lo que hace que el propósito inicial de la llamada sea menos claro para el cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, dado que el bot permite al cliente hablar y responder a sus preguntas sin interrupciones innecesarias, se le otorga una puntuación media."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez al final de la conversación para asegurarse de que el cliente ha terminado y no necesita más información, pero esto podría considerarse innecesario dado que el cliente ya había expresado claramente su deseo de no recibir más información."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones para seguir la conversación (agendar cita/visita o derivar a asesor) al final de la transcripción, pero no concreta ninguna acción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ni realiza la acción solicitada de listar propiedades. La transcripción se centra en explicar el juego de truco y no cumple con los criterios establecidos."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de que la transcripción termina abruptamente con 'send_sms', el bot continúa siendo amable y profesional al finalizar la conversación."
+        }
+      }
+    },
+    {
+      "id": "019e69cd-e47c-7d3a-8578-ee42dd2951e3-019e69ce-072a-7bdd-9348-374966d63ebb",
+      "campaign": "Campaña Extraccion de datos",
+      "outcome": "other",
+      "contacto": "Joaquin Bogado",
+      "avg": 0.786,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada, diciendo 'Hola mi nombre es Edith, agente de TCA ¿en que puedo ayudarte hoy?'. No se identifica directamente como la marca al principio."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero debido a la confusión inicial y las múltiples interrupciones del cliente, no se logra una comunicación clara sobre el motivo real de la llamada hasta que el cliente finalmente solicita información sobre el estado de un manifiesto. La explicación es ambigua y fragmentada."
+        },
+        "pide_consentimiento": {
+          "value": 1.0,
+          "reason": "El bot pregunta explícitamente si es un buen momento para continuar la conversación al inicio de la llamada con el mensaje 'Perdón, parece que hay una confusión. Este servicio es para consultas de TCA, no de TSA. ¿Tenés alguna consulta sobre un envío, una guía o un manifiesto de TCA? Estoy acá para ayudarte con eso. ¿Cuál es el problema por el que te comunicás?'"
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y gracia después de que el cliente expresa un interés limitado en los servicios ofrecidos, sin insistir en proporcionar información adicional o realizar más intentos para convencer al cliente."
+        },
+        "ofrece_agendar_cita": {
+          "value": 1.0,
+          "reason": "El bot ofrece claramente la opción de validar el estado del manifiesto al cliente y agiliza el proceso proporcionando información relevante sobre los servicios de TCA. Además, al final, si el cliente no necesita más ayuda, el bot se despide amablemente."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot lista más de 3 aeropuertos (6 en total) sin filtrar según la solicitud del lead, lo que no cumple con el criterio especificado."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, utilizando siempre lenguaje amable y evitando cualquier insulto o agresividad."
+        }
+      }
+    },
+    {
+      "id": "019eb70c-3ec2-717b-a5ae-db79862dce78-019eb7a5-9b8c-7244-a6d2-b8bf94084166",
+      "campaign": "Campaña Demo",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada sin mencionar específicamente la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero luego se desvía hacia una conversación sobre truco y no vuelve a mencionar claramente por qué llama."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar la conversación. En cambio, continúa con la conversación después de obtener el nombre del cliente y sin recibir una confirmación explícita de que sea un buen momento para seguir."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y grácil después de que el cliente indique claramente que no está interesado en seguir con la conversación, sin insistir más allá de lo necesario."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones para ayudar al cliente (intentar algo diferente o otra consulta), pero no concreta ninguna acción como agendar una cita o derivar a un asesor."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que el lead no solicitó información sobre propiedades. Además, la conversación se desvió del tema principal y no proporcionó ayuda relevante al lead."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando hay problemas técnicos, el bot se muestra comprensivo y ofrece alternativas para ayudar al cliente."
+        }
+      }
+    },
+    {
+      "id": "019eb70c-3ec2-717b-a5ae-db79862dce78-019eb7a4-ee84-725b-9161-d3e817aa6a07",
+      "campaign": "Campaña Demo",
+      "outcome": "voicemail",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.286,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna presentación al inicio de la llamada, por lo que no se identifica como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada y el cliente corta la comunicación."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna pregunta antes de continuar con la llamada, ya que la llamada se corta inmediatamente por parte del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la llamada cortésmente sin insistir y el cliente finaliza dos veces la llamada."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción para agendar cita/visita ni derivar a asesor. El cliente corta la llamada sin interés."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot intentó listar propiedades pero el cliente colgó sin que se diera tiempo a realizar la lista. No se cumplió con el criterio de listar 1-3 propiedades correctas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, incluso cuando el cliente colgó rápidamente sin dejar mensaje."
+        }
+      }
+    },
+    {
+      "id": "019e88fc-c680-7e6e-9ced-03088017665f-019e8952-dbb0-7f2e-9a5a-c50de15d9b20",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos",
+      "outcome": "other",
+      "contacto": "Gabriel Zorrilla",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la conversación sin mencionar específicamente la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero luego se desvía para tratar temas irrelevantes como predecir campeonatos o buscar información meteorológica, lo que hace que la explicación inicial sea ambigua y poco clara."
+        },
+        "pide_consentimiento": {
+          "value": 1.0,
+          "reason": "El bot pregunta explícitamente si el cliente quiere continuar con alguna otra información o consulta específica antes de comenzar a recoger datos."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés después de que el cliente exprese claramente su interés en finalizar la llamada, sin insistir ni hacer más preguntas innecesarias."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones como agendar una llamada telefónica o responder preguntas sobre temas generales, pero no concreta ninguna acción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que el lead no solicitó información sobre bienes raíces. Además, la conversación se desvió hacia temas irrelevantes como el clima, predicciones deportivas y chistes."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la conversación, sin insultos ni agresividad. Incluso cuando el cliente se muestra confundido o inseguro, el bot responde de manera calmada y paciente, proporcionando ayuda y asistencia en cada momento."
+        }
+      }
+    },
+    {
+      "id": "019e88fc-c680-7e6e-9ced-03088017665f-019e8952-dbb0-741a-a497-561b3f02e535",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos",
+      "outcome": "other",
+      "contacto": "Israel Diego Lalo",
+      "avg": 0.714,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada y no menciona específicamente la marca. Sin embargo, el bot realiza una buena interacción con el cliente, proporcionando información relevante sobre el juego de truco."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. La conversación comienza con una llamada de prueba para extracción de datos, pero esto no se menciona explícitamente hasta después del primer saludo."
+        },
+        "pide_consentimiento": {
+          "value": 1.0,
+          "reason": "El bot pregunta explícitamente al cliente si hay algo más en lo que pueda ayudarlo antes de continuar con el diálogo."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez después de que el cliente expresa claramente no estar interesado en la campaña al principio de la conversación. Aunque responde a las preguntas del cliente sobre truco de manera informativa y amable, esto no cumple con el criterio de cerrar cortésmente sin insistir cuando se le indica que no hay interés."
+        },
+        "ofrece_agendar_cita": {
+          "value": 1.0,
+          "reason": "El bot ofrece agendar cita/visita o derivar a asesor al finalizar la conversación, aunque no se menciona explícitamente en esta transcripción."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot proporciona información relevante sobre el truco de cartas, pero no cumple con la instrucción de listar propiedades o inmuebles. En su lugar, ofrece estrategias y explicaciones sobre las jugadas del juego."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, respondiendo de manera amable a las preguntas del cliente sin ninguna agresividad o insultos."
+        }
+      }
+    },
+    {
+      "id": "019e88fc-c680-7e6e-9ced-03088017665f-019e8952-dbb0-7252-beb9-2898845476fb",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.357,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot no se presenta con el nombre de la marca al inicio de la llamada, sino que comienza directamente con una conversación genérica."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La conversación comienza con una llamada de prueba y no se menciona ningún motivo específico o contexto de campaña o emprendimiento."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar, sino que simplemente comienza a interactuar con el cliente. Sin embargo, dado que la llamada se detiene al final sin interrupciones, podría interpretarse como una especie de permiso implícito."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez al inicio de la conversación cuando el cliente responde 'No'. Posteriormente, el bot maneja correctamente la interacción, proporcionando información solicitada y cerrando cortésmente la llamada."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor en ningún momento de la transcripción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no cumplió con el criterio de listar propiedades y solo interactuó sobre el juego de truco, sin proporcionar ninguna lista de propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando el cliente no se expresa claramente, el bot solicita una repetición de manera amable. Además, en las interacciones relacionadas con preguntas sobre el juego de truco, el bot mantiene un tono educado y ayuda al cliente a obtener la información que necesita sin presión."
+        }
+      }
+    },
+    {
+      "id": "019e88fc-c680-7e6e-9ced-03088017665f-019e8952-dbb0-70d9-9542-bc3f1e335c44",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos",
+      "outcome": "other",
+      "contacto": "Fernanda Montanari",
+      "avg": 0.714,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot no se identifica específicamente como la marca al inicio de la llamada, sino que comienza directamente con el propósito de la llamada. Esto es un poco genérico y podría mejorar si se incluyera el nombre de la marca al principio."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al principio, pero luego se desvía para programar una cita sin volver a mencionar claramente que es para la extracción de datos de campaña. Aunque finalmente agendó una cita, no mantuvo constante el contexto inicial."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar, sino que inicia con una introducción y luego pasa directo al asunto principal. Sin embargo, el bot sí permite la interrupción del cliente al inicio de la conversación."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot maneja correctamente el caso cuando el cliente expresa que no tiene más preguntas o asuntos a tratar. Cierra la conversación de manera cortés y amable, sin insistir después de que el cliente confirma que no necesita ayuda adicional."
+        },
+        "ofrece_agendar_cita": {
+          "value": 1.0,
+          "reason": "El bot ofrece claramente la opción de agendar una cita y el cliente acepta esta sugerencia, finalizando con la cita programada."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot listó más de 3 opciones (en este caso, solo una opción de agendamiento), y no cumplió con la instrucción de listar solo 1-3 propiedades correctas según lo solicitado por el lead."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Se muestra atento a las necesidades del cliente y proporciona información clara y precisa."
+        }
+      }
+    },
+    {
+      "id": "019e895f-5fee-7929-8a71-d48a81073a37-019e8961-d287-7b29-8a39-537773435a02",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 2",
+      "outcome": "other",
+      "contacto": "Joaquin Bogado",
+      "avg": 0.786,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada, diciendo que es una llamada de prueba para demostrar cómo funciona la extracción de datos y la atención automatizada. No se identifica específicamente como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot inicialmente no explica claramente el motivo de la llamada, lo que puede ser confuso para el cliente. Sin embargo, luego proporciona información sobre las reglas del truco, cumpliendo así con una parte del objetivo original de la llamada (demostración)."
+        },
+        "pide_consentimiento": {
+          "value": 1.0,
+          "reason": "El bot pregunta explícitamente si hay algo más en lo que pueda ayudar al cliente antes de iniciar la conversación."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera grácil después de que el cliente expresa no estar interesado en el tema propuesto. El bot cambia rápidamente a un tema relacionado con las reglas del truco, manteniendo la conversación amigable y útil para el cliente."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona que puede ofrecer información adicional sobre señales y estrategias del juego de truco, pero no concreta en agendar una cita o derivar a un asesor. La conversación se centra en responder preguntas sobre las reglas del juego."
+        },
+        "listado_max_3": {
+          "value": 1.0,
+          "reason": "El bot respondió correctamente al lead, proporcionando información precisa sobre las señas del juego de truco según lo solicitado por el cliente. No se incluyeron elementos innecesarios y se mantuvo la conversación enfocada en las reglas y estrategias del juego."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, respondiendo de manera clara y amable a todas las preguntas del cliente sin mostrar ninguna forma de agresividad o insultos."
+        }
+      }
+    },
+    {
+      "id": "019e895f-5fee-7929-8a71-d48a81073a37-019e8961-d287-77f0-86db-79869b48b9de",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 2",
+      "outcome": "other",
+      "contacto": "Carol Navia",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente como una llamada de prueba para la extracción de datos de campaña al inicio de la conversación."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica el motivo de la llamada al principio, lo que hace que sea ambiguo para el cliente. Sin embargo, durante la conversación, el bot proporciona información relevante y útil sobre el juego de truco, cumpliendo con parte del criterio."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar o si puede seguir con la conversación. Sin embargo, dado que el bot se detiene después de cada respuesta y espera una nueva pregunta del cliente, esto podría interpretarse como un intento implícito de asegurarse de que el cliente esté listo para recibir más información."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés después de que el cliente expresa su interés en obtener información sobre el juego de truco y todas sus dudas son atendidas satisfactoriamente."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot proporciona información sobre el juego de truco pero no ofrece agendar una cita o derivar a un asesor para futuras consultas."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no cumplió con el criterio de listar propiedades. En lugar de eso, proporcionó información sobre el juego de truco, lo cual es completamente fuera del tema solicitado por el lead."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Responde de manera clara y concisa a las consultas del cliente, mostrando paciencia y disposición para aclarar cualquier duda."
+        }
+      }
+    },
+    {
+      "id": "019e895f-5fee-7929-8a71-d48a81073a37-019e8961-d286-70fa-b18f-4f362503e5ac",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 2",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot no se presenta con la marca al inicio de la llamada, sino que comienza directamente con el asunto de la prueba de extracción de datos. Aunque no menciona una marca específica, tampoco es tan genérico como para recibir un score de 0."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero luego se desvía para tratar temas relacionados con el juego de truco, lo que hace que el propósito inicial de la llamada sea ambiguo y menos claro."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si puede continuar o si es buen momento para la llamada. En lugar de eso, inicia con una pregunta directa sin esperar una respuesta inicial del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y grácil después de que el cliente indique que no necesita más información."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones de agendar cita/visita o derivar a asesor al finalizar la conversación, pero no concreta ninguna acción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no cumplió con la instrucción de listar propiedades y solo proporcionó información sobre el juego de truco, sin realizar ninguna acción relevante para el lead."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de algunos problemas iniciales con el reconocimiento del hablante, el bot se muestra paciente y persistente en obtener la información necesaria. Además, proporciona respuestas claras y relevantes a las consultas del cliente."
+        }
+      }
+    },
+    {
+      "id": "019e896d-f998-7e52-8b1f-e56c16e5b218-019e8977-3c13-7c16-9987-ecca91895fc8",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 3",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada y no menciona explícitamente la marca. Aunque representa a una empresa en el diálogo posterior, esto no compensa la falta de identificación inicial."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero debido a que la conversación se desvía rápidamente hacia otro tema (el truco), no cumple con su propósito inicial de proporcionar asistencia relacionada con ventas y soporte para la empresa. Además, aunque finalmente vuelve a tocar el tema original, ya en una conversación lateralizada."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar, sino que simplemente pasa a otra conversación después de un tiempo sin recibir una respuesta directa del cliente. Sin embargo, el bot sí da la opción de finalizar la llamada al decir 'No', lo cual puede interpretarse como una forma indirecta de preguntar."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y grácil después de que el cliente exprese claramente su interés en otro tema. No insiste más allá del intento inicial de ayudar con la información solicitada."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones de agendar cita/visita o derivar a asesor al final de la conversación, pero no concreta ninguna acción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no realizó ninguna acción relevante relacionada con la lista de propiedades. La conversación se desvió hacia un tema completamente diferente (el juego de truco), sin cumplir el objetivo inicial de listar propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, incluso cuando el cliente desvió el tema hacia preguntas no relacionadas con las ventas de la empresa."
+        }
+      }
+    },
+    {
+      "id": "019e896d-f998-7e52-8b1f-e56c16e5b218-019e8977-3c13-7643-9187-59df1b055966",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 3",
+      "outcome": "other",
+      "contacto": "Joaquin Bogado",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot no se presenta inicialmente como la marca al inicio de la llamada. En cambio, comienza con un saludo genérico y luego introduce su identidad durante el diálogo."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. La conversación comienza con una prueba para extracción de datos, pero esto no se menciona explícitamente hasta después del primer intento fallido de comunicación."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar o si puede seguir hablando. En lugar de eso, continúa con la conversación hasta que el cliente colga."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés después de recibir 'no me interesa', sin insistir en seguir con el tema."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona opciones de ayuda al cliente (como saber más sobre estrategias o reglas del truco), pero no concreta ninguna acción específica como agendar una cita o derivar a un asesor."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot listó más de tres propiedades relacionadas con el truco, incluyendo detalles sobre envido y falta envido, lo que excede el criterio de solo listar hasta tres propiedades correctas según lo solicitado."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando el cliente se confunde o no expresa claramente sus preguntas, el bot siempre es paciente y pide que se repita para asegurar una comprensión correcta."
+        }
+      }
+    },
+    {
+      "id": "019e8dde-606e-7f1d-b99a-67acb41aec28-019eb755-1863-745a-96a9-c47b3b8bb12a",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 4",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente como Soporte Técnico de Roemmers al inicio de la llamada y mantiene esta identidad durante toda la conversación."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. No se menciona qué campaña o emprendimiento está promoviendo ni si hay algún interés previo del cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, dado que el bot esperó a que el cliente iniciara la consulta y luego continuó con los pasos necesarios, se puede interpretar que está buscando confirmar que es un buen momento para seguir."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez en confirmar el correo electrónico y luego cierra la conversación sin insistir más cuando el cliente expresa dificultades para continuar."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor después de resolver el problema del cliente."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no cumplió con la instrucción de listar propiedades. En lugar de eso, el voicebot solucionó un problema de contraseña y creación de ticket."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando hay problemas técnicos, el bot se muestra profesional y comprensivo."
+        }
+      }
+    },
+    {
+      "id": "019e8dde-606e-7f1d-b99a-67acb41aec28-019ea900-b449-722b-abed-a51e09d7abd4",
+      "campaign": "Cuscatlan - Campaña de prueba de extracción de datos 4",
+      "outcome": "other",
+      "contacto": "Israel Diego Lalo",
+      "avg": 0.714,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica al inicio de la llamada como 'Soporte Técnico de Roemmers', cumpliendo con el criterio de presentación de marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica el motivo de la llamada al inicio, solo presenta un saludo y solicita información del cliente. Aunque posteriormente se menciona que el ticket no pudo ser creado debido a un error técnico, esto no compensa la falta de explicación inicial sobre por qué llama."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si puede continuar o si es un buen momento para hablar. Sin embargo, dado que el lead finalmente colgó la llamada, se puede inferir que el momento era adecuado."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y respetuosa después de que el cliente expresa un problema no relacionado con soporte técnico y finaliza la llamada."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de crear un ticket para registrar la solución, pero no agendó una cita o derivó al asesor ya que el proceso de creación del ticket falló."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El voicebot lista más de 3 propiedades (en este caso, 4) y algunas no son relevantes para el lead, ya que incluye información sobre problemas con la canilla de agua caliente y el calefón, lo cual está fuera del scope de su consulta principal relacionada con Teams."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de los inconvenientes técnicos que se presentaron, el bot mantiene una actitud profesional y continua asistiendo al cliente con paciencia."
+        }
+      }
+    },
+    {
+      "id": "019eb7a7-b695-7fdb-93f8-fbeeae78b032-019eb7b0-d5d7-7c66-8ab6-4169be3d2f7f",
+      "campaign": "Campaña prueba de tiempo",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.429,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada sin mencionar específicamente la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. No se indica si es una campaña, un emprendimiento o si hay algún interés previo del cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En su lugar, pasa directamente a hacer preguntas adicionales después de saludar."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y amable después de que el cliente indique claramente que no tiene más preguntas."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar una cita/visita ni derivar a un asesor. Solo intenta buscar información y finaliza la llamada sin sugerir ninguna acción adicional."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que el lead no solicitó información sobre propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ebc16-58e6-7899-8aec-43a6121ad366",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "voicemail",
+      "contacto": "Diegote Lalo",
+      "avg": 0.286,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no se presenta ni identifica como la marca al inicio de la llamada."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La transcripción muestra solo que el cliente colgó sin recibir información sobre por qué se estaba llamando."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no pregunta explícitamente si es buen momento o puede continuar. La llamada se corta directamente sin ninguna interacción adicional por parte del bot."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la llamada cortésmente sin intentar insistir ni dejar ningún tipo de mensaje adicional."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción de agendar cita/visita ni derivar a asesor. El lead simplemente se despide sin recibir ningún servicio adicional del voicebot."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no lista ninguna propiedad ya que el cliente colgó antes de que pudiera hacerlo."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019e65b3-9b31-7043-a227-149f46a8933b",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Israel Diego Lalo",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada diciendo 'Hola mi nombre es Edith, agente de TCA', en lugar de identificarse directamente como la marca. No menciona el nombre específico de la empresa."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al cliente al inicio, pero este no se da cuenta y comienza a hablar sobre una guía sin que el bot lo indique claramente. El bot finalmente intenta confirmar el número de guía, pero el proceso es confuso y el bot no logra explicar claramente por qué llama hasta el final."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, permite al cliente hablar y parece estar atento a sus necesidades, lo que implica cierto respeto por el tiempo del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cerró la conversación de manera cortés y respetuosa después de que el cliente indicara que no quería continuar la llamada, sin insistir en obtener más información o realizar acciones adicionales."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la posibilidad de intentar con otro número, pero no agendó una cita ni derivó al asesor. Aunque ofrece opciones para continuar la conversación, no concreta ninguna acción específica."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que el lead no solicitó información sobre propiedades. Además, la conversación se centra en validar una guía de envío y no se realiza ninguna acción relacionada con la venta o gestión de propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de que el cliente tiene dificultades para proporcionar información clara, el bot siempre es paciente y pide clarificaciones de manera amable."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-e139-7e7c-94ff-dd73ee8c445b",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Nahuel Laporte",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada, diciendo 'Hola mi nombre es Edith, agente de TCA'. No se identifica con el nombre de la marca al principio."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. No se menciona explícitamente que es una llamada para resolver problemas relacionados con expediciones o órdenes de carga."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En cambio, continúa con la información y las solicitudes de datos sin esperar una confirmación explícita del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot responde de manera cortés y profesional cuando el cliente expresa que no necesita más ayuda, diciendo 'Gracias por contactarte con TCA. Si tienes alguna consulta adicional no dudes en contactarnos por este medio o por nuestra web www.aeropuertosargentinacargas.com.' Esto demuestra una buena interacción sin insistir."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de consultar con Atención al Cliente pero no agendó una cita o derivó al asesor directamente. Además, no se ofrece ninguna otra opción de ayuda."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot listó más de 3 propiedades (guías) y no filtró correctamente las solicitudes del cliente. Solo debería haber listado la nueva guía 13, pero también mencionó la guía inhabilitada ABC0H00345."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de que el cliente tiene dificultades para expresarse claramente, el bot siempre mantiene una actitud amable y paciente."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-c296-7ce7-9582-56fa7f6ebebe",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.429,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta como Edith de TCA al inicio de la llamada, pero luego no se refiere a la marca durante el resto del diálogo."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada hasta que el cliente ya ha proporcionado información sobre el estado de una guía."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, implícitamente se ajusta a los momentos en que espera respuestas del cliente, como cuando solicita el nombre y el número de guía."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y grácil después de que el cliente indique claramente su interés en no continuar con la conversación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor en ninguna parte de la transcripción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad y la transcripción no indica que el lead haya solicitado información sobre propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando hay dificultades para escuchar el nombre del cliente, se muestra paciente y persistente en obtener la información necesaria."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-83ba-7207-989f-090ef9ab845e",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Fernanda Montanari",
+      "avg": 0.429,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta como Edith, agente de TCA, pero no menciona la marca al inicio de la llamada. Se identifica durante el diálogo, pero no en un momento inicial claro y directo."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. No se indica qué es lo que va a hacer o por qué está contactando al cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En su lugar, pasa directamente a presentarse y a preguntar por el asunto, sin solicitar permiso previo."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot insiste más de una vez para obtener información del cliente, incluso después de que el cliente indica claramente no estar interesado en la llamada inicialmente."
+        },
+        "ofrece_agendar_cita": {
+          "value": 1.0,
+          "reason": "El bot ofrece agendar la cita (agendó la llamada para una hora específica) y no solo menciona opciones sino que concreta la acción."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no lista ninguna propiedad ya que el lead no solicitó información sobre propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-2e85-7fd8-8639-a0af871fedf1",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Gabriel Zorrilla",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta como un asistente virtual de la marca TCA al inicio de la llamada, pero no repite esta identificación durante el diálogo. Además, no se identifica claramente como una inteligencia artificial hasta que el cliente lo pregunta."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero la explicación es ambigua y no clara. Además, el cliente finalmente cambia el tema, lo que indica que la explicación inicial no fue suficiente para mantener su atención o interés en el servicio ofrecido."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En cambio, continúa directamente con la primera pregunta después de presentarse."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez en continuar la consulta después del cambio de tema solicitado por el cliente, pero luego cierra cortésmente cuando el cliente indica que no desea seguir."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de transferir a un supervisor pero no la concreta al finalizar la llamada."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ni realiza la tarea solicitada de listar propiedades. Además, el lead cambió rápidamente su solicitud y el bot no maneja adecuadamente la situación, listando muchas opciones sin filtrar correctamente."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, incluso cuando el cliente se vuelve incoherente o desafiante. No utiliza insultos ni agresividad en ninguna parte de la conversación."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-2e85-7f49-a314-231680b9c3b5",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "other",
+      "contacto": "Carol Navia",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada diciendo 'Hola mi nombre es Edith, agente de TCA ¿en que puedo ayudarte hoy?', en lugar de identificarse directamente como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. No se menciona qué campaña o emprendimiento está realizando ni si hay algún interés previo del cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, implícitamente permite que el cliente interrumpa y cambie de tema al mencionar el número de guía cuando el cliente indica su interés en consultar por uno."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste varias veces para obtener el número de guía correcto, lo cual no cumple con la puntuación máxima. Sin embargo, finalmente cierra la conversación cortésmente cuando el cliente indica que no necesita más ayuda."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de validar el manifiesto o guía, pero no agendó una cita ni derivó al asesor. Aunque ofrece información sobre el número de guía y su validación, no propone acciones adicionales para avanzar en la conversación."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot logró obtener correctamente el número de guía del cliente después de múltiples intentos, pero no cumplió con la instrucción de listar propiedades ya que no se mencionó ni se realizó ninguna acción relacionada con la lista de propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de las dificultades para obtener información clara del cliente, el bot mantiene una actitud paciente y ayuda al cliente a proporcionar la información necesaria paso a paso."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-2e85-7ad6-bbbf-06cec0a979df",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "voicemail",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.286,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna presentación al inicio de la llamada, por lo que no se identifica como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada y el cliente corta la comunicación."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna pregunta antes de que el cliente cuelgue y no explique si es un buen momento para continuar."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la llamada cortésmente sin insistir y el cliente finaliza la llamada dos veces con 'hangup', lo cual indica que no quiso escuchar más."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción para agendar cita/visita ni derivar al asesor, y el lead simplemente colgó sin mostrar interés."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot intentó listar propiedades pero el cliente colgó sin que se diera tiempo a realizar la lista. No se cumplió con la instrucción de listar 1-3 propiedades correctas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, incluso cuando el cliente colgó rápidamente sin dejar mensaje."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-2e85-7ab2-a514-9ce3dbdb7bad",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "voicemail",
+      "contacto": "Nahuel Laporte",
+      "avg": 0.286,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no se identifica ni presenta ninguna marca al inicio de la llamada."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica ningún motivo para la llamada ya que el cliente colgó sin que el bot pudiera explicar nada."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no hace ninguna pregunta y continúa directamente, ya que la transcripción muestra que el cliente colgó antes de que el bot pudiera hacer una pregunta."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot no realiza ninguna interacción después del hangup del cliente, por lo que se puede inferir que cierra cortésmente la llamada sin insistir."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna oferta o sugerencia al cliente ya que el cliente colgó inmediatamente y no hubo interacción significativa."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no realizó ninguna lista de propiedades ya que el cliente colgó la llamada antes de que pudiera hacerlo."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, sin insultos ni agresividad, aunque el cliente realizó un hangup."
+        }
+      }
+    },
+    {
+      "id": "019dde98-a1a8-79a1-8c57-2cce0ded60bf-019ddec0-2e85-75c6-83de-b81cef297d32",
+      "campaign": "TCA - Guias y manifiestos",
+      "outcome": "voicemail",
+      "contacto": "Fernanda Montanari",
+      "avg": 0.286,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no se identifica como la marca al inicio de la llamada. En este caso, el cliente inició la conversación sin que el bot presentara previamente su identidad."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica ningún motivo para la llamada y el cliente colgó sin recibir información."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no hace ninguna pregunta ni verifica si es un buen momento para continuar la llamada. La transcripción muestra que el cliente colgó directamente sin interacción del bot."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot no realiza ninguna interacción después del hangup del cliente, por lo que se puede inferir que cierra cortésmente sin insistir."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción para agendar cita/visita ni derivar a asesor. El cliente simplemente colgó sin interacción adicional."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no cumplió con la instrucción ya que no lista ninguna propiedad ni realiza ninguna acción relevante. El lead colgó sin interacción significativa."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019ed0de-ddcc-7e33-9bda-e3bb19768c1e-019ed1bb-75d1-7302-a2a9-f50fcf152730",
+      "campaign": "Campaña push notification",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio y no menciona la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero luego se desvía para responder a preguntas específicas del cliente y no vuelve a mencionar el propósito original de la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En cambio, continúa con la conversación después de obtener el nombre del cliente y sin esperar una confirmación explícita."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot responde a la negativa del cliente de manera cortés y finaliza la llamada sin insistir, cumpliendo con el criterio establecido."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor. Solo proporciona información y cierra la llamada."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que el lead no solicitó información sobre propiedades y la conversación se centró en responder una pregunta sobre el juego de truco."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando hay dificultades de comprensión, el bot solicita claridad de manera amable."
+        }
+      }
+    },
+    {
+      "id": "019ed0de-ddcc-7e33-9bda-e3bb19768c1e-019ed1ba-f0f7-76a7-a65e-7146ab9041bd",
+      "campaign": "Campaña push notification",
+      "outcome": "voicemail",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.143,
+      "scores": {
+        "se_presenta": {
+          "value": 0.0,
+          "reason": "El bot no se identifica como la marca al inicio de la llamada y no realiza ninguna presentación."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. Solo solicita que se acerque más al micrófono para poder escuchar mejor."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna pregunta sobre si es buen momento para continuar la llamada ni si puede proseguir. Continúa directamente con una solicitud de que el cliente se acerque más al micrófono."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot insiste en que el cliente se acerque al micrófono o hable más fuerte antes de que el cliente cuelgue la llamada."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción de agendar cita/visita ni derivar a asesor. El lead colgó la llamada sin que el bot pudiera ofrecerle opciones adicionales."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El lead colgó la llamada antes de que el bot pudiera proporcionar ninguna información sobre propiedades, por lo tanto, no se puede evaluar correctamente."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, solicitando amablemente que el cliente se acerque más al micrófono o hable más fuerte para poder ayudarlo mejor."
+        }
+      }
+    },
+    {
+      "id": "019f4281-3800-7567-a31d-1f66beaa4d82-019f4282-42aa-79c9-966d-7c6df63515e8",
+      "campaign": "Test notis push",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.357,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada sin mencionar directamente la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La conversación comienza con un llamado de prueba y no se menciona ningún motivo específico o contexto relevante para el cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot intenta verificar si es un buen momento para continuar la conversación al inicio, pero luego continúa sin esperar una respuesta explícita del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez después de la respuesta inicial 'No', solicitando un nombre y preguntando por consultas. Luego cierra cortésmente sin insistir más."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor después de la interacción con el cliente."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad ya que la conversación se centra en trucos y envío de información, sin mencionar propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019f4281-3800-7567-a31d-1f66beaa4d82-019f4281-45a8-7611-8bb4-6727836ac27a",
+      "campaign": "Test notis push",
+      "outcome": "other",
+      "contacto": "Joaquin Bogado",
+      "avg": 0.429,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada, diciendo 'Hola, ¿tienes alguna consulta específica sobre el truco de naipes? Estoy aquí para ayudarte?' en lugar de identificarse como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La conversación comienza preguntando sobre un 'truco de naipes', lo cual es completamente diferente al propósito inicial del llamado que era para el 'workflow de extracción de datos'."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En su lugar, inicia directamente con información sobre el truco de naipes, sin esperar una respuesta del cliente antes de hacerlo."
+        },
+        "maneja_no_interes": {
+          "value": 1.0,
+          "reason": "El bot cierra la conversación de manera cortés y amable después de que el cliente indique claramente que no desea continuar con la conversación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar una cita/visita ni derivar a un asesor. Solo intenta ayudar con la información solicitada pero finaliza sin ofrecer opciones adicionales."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot no realizó ninguna acción relevante relacionada con la lista de propiedades ni intentó responder a la solicitud del lead sobre el truco de naipes."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando no puede proporcionar la información solicitada, mantiene una actitud amable y ofrece ayuda adicional."
+        }
+      }
+    },
+    {
+      "id": "019f42ed-5cbf-74a9-b586-2505d5ce9dfb-019f430a-9994-79d5-94f9-80103f7b16cb",
+      "campaign": "Demo notificaciones push",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.214,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio y no menciona la marca de manera explícita. Aunque en una parte posterior del diálogo el bot menciona 'Hola. Es un gusto saludarte', esto no cumple con la puntuación máxima ya que no se identifica como la marca al principio de la llamada."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot es ambiguo sobre el motivo real de la llamada. Inicialmente parece estar relacionado con un juego de naipes o truco, pero luego cambia a una conversación sobre extracción de datos, lo cual no está claro en la transcripción."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, da una respuesta y espera una reacción del cliente antes de avanzar con el siguiente tema."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot insiste una vez con 'Un momento por favor.', lo cual no es apropiado en este contexto ya que el cliente ha claramente indicado que no necesita más ayuda."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor después de la conversación."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no lista ninguna propiedad y no responde a la pregunta del cliente sobre el envío."
+        },
+        "tono_respetuoso": {
+          "value": 0.0,
+          "reason": "El bot incluye un insulto implícito al referirse a la pregunta del cliente sobre el envío como 'el truco, el juego de naipes', lo cual puede ser percibido como despectivo o confuso en lugar de respetuoso y útil."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-01a043ad-f624-7ac6-93cc-aca6d64d651e",
+      "campaign": "Grupo Proaco",
+      "outcome": "other",
+      "contacto": "Marcelo Benedetto",
+      "avg": 0.571,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente al inicio de la llamada diciendo 'Hola, gracias por llamar a Proaco', en lugar de identificarse directamente como la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al final, pero inicialmente no proporciona una razón clara para la llamada. Además, hay un intercambio confuso y repetitivo que dificulta la comprensión del propósito de la comunicación."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. En cambio, continúa hablando sin esperar una respuesta del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez al final de la conversación para asegurarse de que el cliente ha entendido su respuesta, pero ya el cliente ha expresado claramente que no desea seguir."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de ampliar los criterios de búsqueda, pero no concreta en ofrecer agendar una cita o derivar a un asesor."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot intentó listar propiedades pero solo pudo hacerlo una vez y la búsqueda no arrojó resultados relevantes. Además, el lead solicitó específicamente propiedades en Córdoba, lo cual no se mencionó en la transcripción."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. Incluso cuando el cliente se muestra incoherente o repite acciones, el bot mantiene su paciencia y continúa ayudando de manera amable."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fd854-d3f1-7da4-b685-63e6535231e1",
+      "campaign": "Grupo Proaco",
+      "outcome": "do-not-call",
+      "contacto": "Charli Garcia",
+      "avg": 0.257,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' al inicio de la llamada en lugar de usar el nombre completo de la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada. La conversación comienza con un saludo general y no se menciona ningún motivo específico o contexto para la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar la llamada. Sin embargo, implícitamente da un breve espacio de tiempo al cliente para hablar antes de intentar entender su último comentario."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot intenta escuchar de nuevo pero luego insiste una vez en que el cliente hable más cerca del micrófono, lo cual es innecesario dado que el cliente ya expresó claramente su deseo de terminar la conversación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece ninguna opción para agendar una cita o derivar al asesor, y la conversación se interrumpe debido a la insatisfacción del cliente."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El voicebot intentó listar propiedades pero la conversación se interrumpió prematuramente debido a la insatisfacción del cliente. No se realizaron listados de propiedades."
+        },
+        "tono_respetuoso": {
+          "value": 0.3,
+          "reason": "El bot mantiene un tono respetuoso al principio y durante la mayor parte de la transcripción, pero cuando el cliente se vuelve agresivo con la frase 'No mejor, hay más' y 'Yo no quiero hablar más contigo', el bot responde con una solicitud de repetición en lugar de confrontar o insultar. Sin embargo, la respuesta final es cortante y puede interpretarse como un inicio de agresividad."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fd757-c73a-7b81-afe3-693235fdf31c",
+      "campaign": "Grupo Proaco",
+      "outcome": "too-short",
+      "contacto": "Rafaela Carra",
+      "avg": 0.214,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' en lugar de identificarse con la marca completa o su nombre completo."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no realiza ninguna pregunta sobre si es un buen momento para continuar la llamada y continúa directamente con otro tema."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot no responde al cliente cuando dice 'no me interesa' y continúa con su enfoque inicial de presentación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar al asesor, simplemente presenta un saludo genérico."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El bot no listó ninguna propiedad ya que la conversación aún está en el saludo inicial y no se ha determinado qué tipo de ayuda necesita el cliente."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés al iniciar la conversación con el cliente."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fd73f-6fc0-73c8-ba0c-7c116ec554a2",
+      "campaign": "Grupo Proaco",
+      "outcome": "other",
+      "contacto": "Marcelo Oviedo",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente como 'Proaco' al inicio de la llamada."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al inicio, pero la comunicación es interrumpida y ambigua debido a los problemas técnicos y la falta de claridad en las respuestas del cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la conversación. Sin embargo, permite al cliente tomar su tiempo y no presiona para avanzar rápidamente, lo que implica cierto respeto por el tiempo del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste una vez cuando el cliente dice 'No encontré', pero luego cierra la conversación de manera cortés y agradecida."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de agendar cita/visita al final de la conversación pero no concreta esta acción. Ofrece una URL para consultar propiedades y solicita los datos del cliente, lo que indica que podría derivar a un asesor, aunque esto último no se concrete en la transcripción."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot intentó listar departamentos pero no pudo encontrar resultados debido a un inconveniente técnico. Aunque el lead expresó que no encontró nada, el bot debería haber finalizado la llamada sin intentar una búsqueda repetida y en su lugar haber proporcionado las opciones disponibles o sugerido visitar el sitio web directamente."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de las dificultades para entender al cliente en algunos momentos, el bot siempre se muestra paciente y pide claridad cuando es necesario."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fd38c-fb07-7942-9280-0c07bc2197b6",
+      "campaign": "Grupo Proaco",
+      "outcome": "other",
+      "contacto": "Rafaela Carra",
+      "avg": 0.5,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente diciendo 'Proaco' en lugar de la marca específica."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot intenta explicar el motivo de la llamada al ofrecer ayuda con la compra de una casa, pero no es muy claro o directo en su explicación inicial."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es un buen momento para continuar la llamada. En su lugar, pasa directamente a preguntar sobre las preferencias del cliente sin esperar una respuesta de si puede continuar."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El bot insiste dos veces con el cliente cuando este expresa claramente que no quiere seguir la conversación."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de mostrar opciones de casas pero no agendó una cita ni derivó al asesor, por lo que se le asigna un score intermedio."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot lista más de 3 propiedades sin que el cliente haya solicitado específicamente una cantidad limitada y también incluye información innecesaria ya que el cliente indicó que no quería recibir opciones en ese momento."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la transcripción, sin insultos ni agresividad."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fcd1b-5b81-7254-8cee-5eb1f380274b",
+      "campaign": "Grupo Proaco",
+      "outcome": "other",
+      "contacto": "Valentina Pegrezt",
+      "avg": 0.643,
+      "scores": {
+        "se_presenta": {
+          "value": 1.0,
+          "reason": "El bot se identifica claramente al inicio de la llamada como 'Proaco', cumpliendo con el criterio de presentación de marca."
+        },
+        "menciona_proposito": {
+          "value": 0.5,
+          "reason": "El bot no explica claramente el motivo de la llamada al inicio. Solo inicia conversando con el cliente sin proporcionar información sobre qué tipo de ayuda o información se va a brindar."
+        },
+        "pide_consentimiento": {
+          "value": 0.5,
+          "reason": "El bot no pregunta explícitamente si es buen momento para continuar la llamada. En cambio, continúa con la información de los departamentos sin esperar una respuesta del cliente sobre si puede seguir o no."
+        },
+        "maneja_no_interes": {
+          "value": 0.5,
+          "reason": "El bot insiste varias veces para obtener una respuesta clara del cliente, lo que puede ser visto como molesto. Sin embargo, finalmente cierra la conversación de manera cortés cuando el cliente expresa claramente su interés en un departamento y proporciona sus datos."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.5,
+          "reason": "El bot menciona la opción de agendar cita/visita al final de la conversación, pero no concreta esta acción ni ofrece derivar al asesor."
+        },
+        "listado_max_3": {
+          "value": 0.5,
+          "reason": "El bot lista más de tres propiedades (se listan seis) y algunas de ellas no cumplen con la solicitud del lead (tres habitaciones), por ejemplo, el proyecto 'Departamentos Torre 03 - 2027' que tiene 3 baños en lugar de 3 dormitorios. Además, el bot debería haber detenido la lista después de tres propiedades y preguntado al cliente si quería más detalles sobre alguna de las opciones proporcionadas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la llamada, sin insultos ni agresividad. A pesar de algunos problemas con la claridad en la comunicación, el bot siempre se asegura de pedir una repetición amablemente y no muestra ningún signo de irritación o agresividad."
+        }
+      }
+    },
+    {
+      "id": "019fafd8-084a-73f0-8777-e9afb6da1bfa-019fafda-85b7-76b3-9f53-88c251a10728",
+      "campaign": "Grupo Proaco",
+      "outcome": "too-short",
+      "contacto": "Tipito Enojado",
+      "avg": 0.214,
+      "scores": {
+        "se_presenta": {
+          "value": 0.5,
+          "reason": "El bot se presenta genéricamente como 'parte del equipo de Grupo Proaco' en lugar de identificarse directamente con la marca."
+        },
+        "menciona_proposito": {
+          "value": 0.0,
+          "reason": "El bot no explica el motivo de la llamada, simplemente presenta una saludo genérico sin proporcionar información sobre por qué está contactando al cliente."
+        },
+        "pide_consentimiento": {
+          "value": 0.0,
+          "reason": "El bot no pregunta explícitamente si es un buen momento o si puede continuar. Continúa directamente con la conversación sin solicitar permiso del cliente."
+        },
+        "maneja_no_interes": {
+          "value": 0.0,
+          "reason": "El cliente colgó sin dar una respuesta clara y el bot no tuvo la oportunidad de reaccionar o cerrar la conversación de manera grácil."
+        },
+        "ofrece_agendar_cita": {
+          "value": 0.0,
+          "reason": "El bot no ofrece agendar cita/visita ni derivar a asesor, simplemente hace una introducción y el cliente colgó la llamada."
+        },
+        "listado_max_3": {
+          "value": 0.0,
+          "reason": "El lead colgó la llamada sin que el bot pudiera listar ninguna propiedad, por lo tanto, no se cumplió con el criterio de listar propiedades correctas o incorrectas."
+        },
+        "tono_respetuoso": {
+          "value": 1.0,
+          "reason": "El bot mantiene un tono respetuoso y cortés durante toda la interacción, incluso cuando el cliente colgó."
+        }
+      }
+    }
+  ]
+}

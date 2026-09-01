@@ -58,7 +58,7 @@ td{color:#e2e8f0}
 <body>
 <div class="header">
 <h1>📞 GAIL VoiceBot · Evaluación Masiva con Llamadas Reales</h1>
-<p>45 llamadas reales · 15 campañas outbound · 7 reglas heurísticas + 7 con juez LLM · qwen2.5:7b local · Generado 2026-09-01 11:32</p>
+<p>45 llamadas reales · 15 campañas outbound · 7 reglas heurísticas + 7 con juez LLM · qwen2.5:7b local · Generado 2026-09-01 17:30</p>
 </div>
 
 <div class="container">
@@ -919,9 +919,22 @@ td{color:#e2e8f0}
 <thead><tr><th>#</th><th>Prueba</th><th>Herramienta</th><th>Modelo</th><th>Llamadas</th><th>Métricas</th><th>Resultado</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>QA ficción (validación)</td><td><span class="tool-badge deepeval">Local</span></td><td>qwen2.5:7b</td><td>6</td><td>7</td><td><span class="badge badge-yellow">GLOBAL 0.469</span></td></tr>
-<tr><td>2</td><td>Llamadas reales GAIL</td><td><span class="tool-badge deepeval">Local</span></td><td>qwen2.5:7b</td><td>45</td><td>7 heur + 7 llm</td><td><span class="badge badge-yellow">53</span> heur · <span class="badge badge-red">47</span> llm</td></tr>
+<tr><td>2</td><td>Pipeline masivo (baseline)</td><td><span class="tool-badge deepeval">Local</span></td><td>qwen2.5:7b</td><td>45</td><td>7 heur + 7 llm</td><td><span class="badge badge-yellow">53</span> heur · <span class="badge badge-red">47</span> llm</td></tr>
+<tr><td>3</td><td>Llamadas reales GAIL</td><td><span class="tool-badge deepeval">DeepEval</span></td><td>qwen2.5:7b</td><td>45</td><td>7 llm</td><td><span class="badge badge-red">47</span></td></tr>
+<tr><td>4</td><td>Llamadas reales GAIL</td><td><span class="tool-badge langsmith">LangSmith</span></td><td>qwen2.5:7b</td><td>45</td><td>7 llm</td><td><span class="badge badge-red">47</span></td></tr>
+<tr><td>5</td><td>Llamadas reales GAIL</td><td><span class="tool-badge opik">Opik</span></td><td>—</td><td>45</td><td>7 llm</td><td><span class="badge badge-red">SDK bloqueado</span></td></tr>
 </tbody>
 </table>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+<h3>🔄 Comparación Cross-Tool (juez LLM, misma rúbrica)</h3>
+
+<table>
+<thead><tr><th>Regla</th><th style="text-align:center">Pipeline masivo</th><th style="text-align:center">DeepEval-juez</th><th style="text-align:center">LangSmith-juez</th><th style="text-align:center">corr M-vs-LS</th></tr></thead>
+<tbody><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">se_presenta</td><td style="text-align:center"><span class="badge badge-yellow">62</span></td><td style="text-align:center"><span class="badge badge-yellow">52</span></td><td style="text-align:center"><span class="badge badge-yellow">52</span></td><td style="text-align:center"><span class="badge badge-yellow">+0.63</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">menciona_proposito</td><td style="text-align:center"><span class="badge badge-red">31</span></td><td style="text-align:center"><span class="badge badge-red">29</span></td><td style="text-align:center"><span class="badge badge-red">28</span></td><td style="text-align:center"><span class="badge badge-green">+0.91</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">pide_consentimiento</td><td style="text-align:center"><span class="badge badge-red">34</span></td><td style="text-align:center"><span class="badge badge-red">43</span></td><td style="text-align:center"><span class="badge badge-red">43</span></td><td style="text-align:center"><span class="badge badge-yellow">+0.74</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">maneja_no_interes</td><td style="text-align:center"><span class="badge badge-green">79</span></td><td style="text-align:center"><span class="badge badge-yellow">63</span></td><td style="text-align:center"><span class="badge badge-yellow">63</span></td><td style="text-align:center"><span class="badge badge-yellow">+0.61</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">ofrece_agendar_cita</td><td style="text-align:center"><span class="badge badge-red">19</span></td><td style="text-align:center"><span class="badge badge-red">31</span></td><td style="text-align:center"><span class="badge badge-red">30</span></td><td style="text-align:center"><span class="badge badge-green">+0.75</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">listado_max_3</td><td style="text-align:center"><span class="badge badge-red">17</span></td><td style="text-align:center"><span class="badge badge-red">18</span></td><td style="text-align:center"><span class="badge badge-red">18</span></td><td style="text-align:center"><span class="badge badge-green">+0.88</span></td></tr><tr style="border-bottom:1px solid #334155"><td style="padding:8px 10px;color:#e2e8f0;font-weight:600">tono_respetuoso</td><td style="text-align:center"><span class="badge badge-green">86</span></td><td style="text-align:center"><span class="badge badge-green">95</span></td><td style="text-align:center"><span class="badge badge-green">95</span></td><td style="text-align:center"><span class="badge badge-red">+0.44</span></td></tr><tr><td style="padding:8px 10px;color:#f8fafc;font-weight:700">GLOBAL</td><td style="text-align:center"><span class="badge badge-red">47</span></td><td style="text-align:center"><span class="badge badge-red">47</span></td><td style="text-align:center"><span class="badge badge-red">47</span></td><td style="text-align:center;color:#94a3b8">—</td></tr></tbody>
+</table>
+
 </div>
 
 <div class="grid grid-3">
