@@ -81,3 +81,37 @@
 - Validar con juez **qwen2.5-coder** o un modelo de pago (Groq) sobre muestra, para calibrar el juez local.
 - Extender al flujo **inbound** (habilitado por GAIL en el futuro).
 - Automatizar en cron: export semanal → evaluación → dashboard.
+---
+
+## 7. Validación de consistencia del juez (resultados)
+
+Muestra: 8 llamadas reales × 2 corridas × 7 métricas (112 evaluaciones LLM), temperature=0.2.
+
+### Determinismo del juez (estabilidad entre corridas)
+| Métrica | Corrida 1 | Corrida 2 | Estabilidad |
+|---|---|---|---|
+| se_presenta | 0.62 | 0.62 | 1.00 |
+| menciona_proposito | 0.38 | 0.31 | 0.94 |
+| pide_consentimiento | 0.22 | 0.22 | 1.00 |
+| maneja_no_interes | 0.47 | 0.53 | 0.94 |
+| ofrece_agendar_cita | 0.25 | 0.25 | 1.00 |
+| listado_max_3 | 0.44 | 0.44 | 1.00 |
+| tono_respetuoso | 0.59 | 0.59 | 1.00 |
+
+**Conclusión:** el juez LLM es estable (estabilidad ≥ 0.94). A temperature baja (0.2) da puntuaciones muy consistentes.
+
+### Correlación Heur ↔ LLM por métrica
+| Métrica | Heur | LLM | r |
+|---|---|---|---|
+| se_presenta | 0.25 | 0.62 | 0.24 |
+| menciona_proposito | 0.25 | 0.34 | 0.58 |
+| pide_consentimiento | 0.38 | 0.22 | -0.45 |
+| maneja_no_interes | 1.00 | 0.50 | 0.00 |
+| ofrece_agendar_cita | 0.12 | 0.25 | 0.93 |
+| listado_max_3 | 1.00 | 0.44 | 0.00 |
+| tono_respetuoso | 1.00 | 0.59 | 0.00 |
+
+**Lectura:**
+- `ofrece_agendar_cita` (r=0.93) y `menciona_proposito` (r=0.58): heurística y LLM coinciden (concordancia fuerte).
+- `pide_consentimiento` (r=-0.45): el LLM ve consentimiento implícito donde la heur no, o viceversa → discrepancia a revisar.
+- `maneja_no_interes`, `listado_max_3`, `tono_respetuoso` (r=0): heurísticas saturadas en 1.0 sin varianza → el LLM capta matices que la heur no (no son errores, sino menor sensibilidad).

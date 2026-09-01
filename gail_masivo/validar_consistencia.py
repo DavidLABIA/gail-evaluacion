@@ -51,8 +51,9 @@ def transcript_to_text(t):
         out = []
         for turno in t:
             if isinstance(turno, dict):
-                role = turno.get("role", "?")
-                content = turno.get("content", turno.get("text", ""))
+                role = turno.get("role", turno.get("speaker", "?"))
+                content = (turno.get("content") or turno.get("text")
+                           or turno.get("transcript") or "")
                 out.append(f"[{role.upper()}] {content}")
         return "\n".join(out)
     return str(t)
@@ -94,7 +95,7 @@ def llamar_ollama(prompt):
 
 
 def evaluar_llm(llamada, metrica):
-    transcript = transcript_to_text(llamada.get("transcript", ""))
+    transcript = transcript_to_text(llamada.get("transcripcion") or llamada.get("transcript", ""))
     if not transcript:
         return None
     prompt = PROMPT.format(metrica=metrica, transcript=transcript[:4000])
