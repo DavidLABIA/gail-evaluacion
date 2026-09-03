@@ -18,16 +18,17 @@ construido sobre transcripciones reales descargadas de la **API de Lula**.
 | Modelo juez | qwen2.5:7b (local, Ollama) |
 | Score heurístico global | **0.53** |
 | Score LLM global | **0.47** |
+| **Juez de referencia (Gemini)** | **0.52** |
 
 ### Fortalezas detectadas
-- **Tono respetuoso** (heur 1.0 / LLM 0.86) y **manejo del no-interés** (heur 1.0 / LLM 0.79): el bot mantiene cortesía y cierra bien ante rechazos.
+- **Tono respetuoso** (heur 1.0 / LLM 0.86 / Gemini 1.0) y **manejo del no-interés** (heur 1.0 / LLM 0.79 / Gemini 0.96): el bot mantiene cortesía y cierra bien ante rechazos.
 - `listado_max_3` alto en heurística (1.0) = no sobrecarga con listados.
 
 ### Debilidades detectadas
-- **Pide consentimiento** (heur 0.11 / LLM 0.34): raramente pregunta si es buen momento antes de hablar del tema. ⚠️ Riesgo de incumplimiento normativo.
-- **Menciona el propósito** (heur 0.27): muchas llamadas no explican por qué llaman.
-- **Ofrece agendar cita** (heur 0.07): casi nunca deriva a cita/asesor en llamadas de interés.
-- **Se presenta** (heur 0.29 vs LLM 0.62): la heurística es estricta; el LLM detecta presentación parcial.
+- **Pide consentimiento** (heur 0.11 / LLM 0.34 / **Gemini 0.02**): raramente pregunta si es buen momento antes de hablar del tema. ⚠️ Riesgo de incumplimiento normativo.
+- **Menciona el propósito** (heur 0.27 / LLM 0.31 / **Gemini 0.20**): muchas llamadas no explican por qué llaman.
+- **Ofrece agendar cita** (heur 0.07 / LLM 0.19 / **Gemini 0.09**): casi nunca deriva a cita/asesor en llamadas de interés.
+- **Se presenta** (heur 0.29 vs LLM 0.62 / **Gemini 0.47**): la heurística es estricta; el LLM detecta presentación parcial.
 
 ---
 
@@ -93,16 +94,24 @@ escala de colores verde/amarillo/rojo) con detalle por campaña y por llamada.
 
 ```
 gail-evaluacion/
-├── index.html                 # Dashboard (GitHub Pages)
+├── index.html                    # Dashboard principal (GitHub Pages)
+├── dashboard-evaluacion-gail.html  # Dashboard de jueces (cross-tool)
 ├── gail_masivo/
-│   ├── exportar_gail.py       # Export Lula API
-│   ├── evaluar_masivo.py      # Evaluación (heur + LLM)
-│   ├── generar_dashboard.py   # Generador del dashboard
-│   ├── reintentar_export.py   # Reintento en background
-│   ├── data/llamadas_gail.json
-│   ├── evaluacion/resultados_masivos.json
+│   ├── exportar_gail.py          # Export Lula API
+│   ├── evaluar_masivo.py         # Evaluación (heur + LLM)
+│   ├── generar_dashboard.py      # Generador del dashboard
+│   ├── reintentar_export.py      # Reintento en background
+│   ├── validar_consistencia.py   # Validación de consistencia del juez
+│   ├── data/llamadas_gail.json   # Datos fuente (45 llamadas reales)
+│   ├── evaluacion/
+│   │   ├── resultados_masivos.json    # Heurísticas + LLM qwen7b
+│   │   └── gemini_resultados.json     # Juez de referencia Gemini
+│   ├── herramientas/
+│   │   └── evaluar_gemini_urllib.py   # Evaluador Gemini (sin dependencias)
 │   └── reportes/
-└── docs/                      # Documentación adicional
+├── shared/
+│   └── juez_gail_http.py         # Juez LLM compartido (HTTP directo)
+└── docs/                         # Documentación adicional
 ```
 
 ---
@@ -118,3 +127,4 @@ gail-evaluacion/
 ## 📅 Historial
 - **2026-08-31**: Desbloqueo de la API (key nueva) → export de 45 llamadas reales → evaluación completa.
 - **2026-09-01**: Dashboard estilo Proaco + despliegue a GitHub Pages.
+- **2026-09-03**: Juez de referencia Gemini (gemini-flash-lite-latest, Google) → dashboard de jueces cross-tool con 6 jueces comparados.

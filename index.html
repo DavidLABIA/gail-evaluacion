@@ -64,6 +64,7 @@ td{color:#e2e8f0}
 <div class="container">
 <div class="tab-container">
 <button class="tab active" onclick="showTab('overview')">Overview</button>
+<button class="tab" onclick="showTab('jueces')">Jueces</button>
 <button class="tab" onclick="showTab('metrics')">Métricas</button>
 <button class="tab" onclick="showTab('campanas')">Campañas</button>
 <button class="tab" onclick="showTab('calls')">Llamadas</button>
@@ -89,6 +90,57 @@ td{color:#e2e8f0}
 <div class="chart-card"><h3>Score por Campaña</h3><canvas id="chartCamp"></canvas></div>
 </div>
 </div>
+
+<!-- ═══════════ JUECES (comparación cross-tool · referencia Gemini) ═══════════ -->
+<div id="jueces" class="section">
+<div class="grid grid-4" style="margin-bottom:20px">
+<div class="card"><h3>Heurísticas</h3><div class="stat yellow">0.53</div><span class="badge badge-yellow">7 reglas · sin IA</span></div>
+<div class="card"><h3>qwen2.5:7b (3 tools)</h3><div class="stat purple">0.47</div><span class="badge badge-purple">DeepEval·LangSmith·Opik</span></div>
+<div class="card"><h3>qwen2.5-coder:7b</h3><div class="stat purple">0.52</div><span class="badge badge-purple">juez2</span></div>
+<div class="card"><h3>Gemini 3.5 lite</h3><div class="stat green">0.52</div><span class="badge badge-green">★ juez referencia</span></div>
+</div>
+
+<div class="chart-card" style="margin-bottom:20px"><h3>Score global por juez (7 reglas outbound · 45 llamadas)</h3><canvas id="chartJuecesGlobal"></canvas></div>
+
+<div class="grid grid-2">
+<div class="chart-card"><h3>Comparación por métrica (jueces vs referencia)</h3><canvas id="chartJuecesMetrica"></canvas></div>
+<div class="chart-card"><h3>Correlación de cada juez vs Gemini (referencia)</h3><canvas id="chartCorrelacion"></canvas></div>
+</div>
+
+<div class="card" style="margin-top:20px">
+<h3>📊 Tabla comparativa por métrica</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr>
+<th>Métrica</th><th>qwen2.5:7b<br>(DeepEval)</th><th>qwen2.5:7b<br>(LangSmith)</th><th>qwen2.5:7b<br>(Opik)</th><th>qwen2.5-coder<br>(juez2)</th><th>★ Gemini<br>(referencia)</th><th>Lectura</th>
+</tr></thead>
+<tbody id="juecesTable"></tbody>
+</table>
+</div>
+<p style="color:#94a3b8;font-size:12px;margin-top:10px">Gemini (gemini-flash-lite-latest, Google) se usa como juez de referencia externo: mismo prompt y rúbrica que los locales. El consenso confirma las debilidades críticas: <strong style="color:#fecaca">pide_consentimiento</strong> y <strong style="color:#fecaca">menciona_proposito</strong>.</p>
+</div>
+
+<div class="grid grid-3" style="margin-top:20px">
+<div class="card">
+<h3>✅ Consenso entre jueces</h3>
+<table>
+<tr><td style="border:none;color:#94a3b8">Debilidad crítica</td><td style="border:none;text-align:right"><strong style="color:#ef4444">pide_consentimiento</strong></td></tr>
+<tr><td style="border:none;color:#94a3b8">Debilidad</td><td style="border:none;text-align:right"><strong style="color:#ef4444">menciona_proposito</strong></td></tr>
+<tr><td style="border:none;color:#94a3b8">Fortaleza</td><td style="border:none;text-align:right"><strong style="color:#22c55e">tono_respetuoso</strong></td></tr>
+<tr><td style="border:none;color:#94a3b8">Fortaleza</td><td style="border:none;text-align:right"><strong style="color:#22c55e">maneja_no_interes</strong></td></tr>
+</table>
+</div>
+<div class="card">
+<h3>⚠️ Discrepancia a revisar</h3>
+<p style="color:#94a3b8;font-size:13px;line-height:1.5"><strong style="color:#eab308">listado_max_3</strong>: Gemini da <strong>0.93</strong> (alto) pero los jueces qwen dan <strong>0.06–0.18</strong> (bajo). El criterio "si no lista propiedades" se interpreta opuesto. Requiere definir la rúbrica.</p>
+</div>
+<div class="card">
+<h3>ℹ️ Nota metodológica</h3>
+<p style="color:#94a3b8;font-size:13px;line-height:1.5">Se excluyen <strong style="color:#94a3b8">promptfoo</strong> y <strong style="color:#94a3b8">juez3_cloud (gpt-oss)</strong>: dieron ~0.03–0.07 por fallos de parseo, no por juicio real. Gemini es el único juez de <strong style="color:#a855f7">proveedor externo distinto</strong> que corrió limpio.</p>
+</div>
+</div>
+</div>
+
 
 <!-- ═══════════ MÉTRICAS ═══════════ -->
 <div id="metrics" class="section">
@@ -990,6 +1042,55 @@ new Chart(document.getElementById('chartHeur'),{type:'bar',data:{labels:metricas
 new Chart(document.getElementById('chartLLM'),{type:'bar',data:{labels:metricas,datasets:[{label:'LLM',data:llm,backgroundColor:'#a855f7'}]},options:{scales:{y:{min:0,max:1}}}});
 new Chart(document.getElementById('chartCompare'),{type:'bar',data:{labels:metricas,datasets:[{label:'Heur',data:heur,backgroundColor:'#3b82f6'},{label:'LLM',data:llm,backgroundColor:'#a855f7'}]},options:{scales:{y:{min:0,max:1}}}});
 new Chart(document.getElementById('chartCamp'),{type:'bar',data:{labels:campNames,datasets:[{label:'Heur',data:campHeur,backgroundColor:'#3b82f6'},{label:'LLM',data:campLLM,backgroundColor:'#a855f7'}]},options:{indexAxis:'y',scales:{x:{min:0,max:1}}}});
+
+/* ═══ JUECES (comparación cross-tool · referencia Gemini) ═══ */
+const metricasJ = ["se_presenta","menciona_proposito","pide_consentimiento","maneja_no_interes","ofrece_agendar_cita","listado_max_3","tono_respetuoso"];
+const j_deepeval  = [0.522,0.289,0.433,0.633,0.311,0.178,0.947];
+const j_langsmith = [0.522,0.278,0.433,0.633,0.300,0.178,0.947];
+const j_opik      = [0.522,0.300,0.422,0.644,0.322,0.178,0.947];
+const j_coder     = [0.618,0.413,0.460,0.867,0.267,0.058,0.924];
+const j_gemini    = [0.467,0.200,0.022,0.956,0.089,0.933,1.000];
+
+const labelsJ = ["DeepEval\n(qwen 7b)","LangSmith\n(qwen 7b)","Opik\n(qwen 7b)","juez2-coder\n(qwen 7b)","★ Gemini\n(referencia)"];
+const globalsJ = [
+  j_deepeval.reduce((a,b)=>a+b,0)/7,
+  j_langsmith.reduce((a,b)=>a+b,0)/7,
+  j_opik.reduce((a,b)=>a+b,0)/7,
+  j_coder.reduce((a,b)=>a+b,0)/7,
+  j_gemini.reduce((a,b)=>a+b,0)/7
+];
+
+new Chart(document.getElementById('chartJuecesGlobal'),{type:'bar',data:{labels:labelsJ,datasets:[{label:'Score global',data:globalsJ,backgroundColor:['#3b82f6','#8b5cf6','#6366f1','#a855f7','#22c55e']}]},options:{scales:{y:{min:0,max:1,title:{display:true,text:'Score 0-1'}}}}});
+
+function pearson(a,b){
+  const n=a.length, ma=a.reduce((x,y)=>x+y,0)/n, mb=b.reduce((x,y)=>x+y,0)/n;
+  let num=0,da=0,db=0;
+  for(let i=0;i<n;i++){num+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2;}
+  return da&&db? num/Math.sqrt(da*db):0;
+}
+const correl = [
+  pearson(j_deepeval,j_gemini),
+  pearson(j_langsmith,j_gemini),
+  pearson(j_opik,j_gemini),
+  pearson(j_coder,j_gemini)
+];
+new Chart(document.getElementById('chartCorrelacion'),{type:'bar',data:{labels:["DeepEval","LangSmith","Opik","juez2-coder"],datasets:[{label:'r vs Gemini',data:correl,backgroundColor:'#22c55e'}]},options:{scales:{y:{min:-1,max:1,title:{display:true,text:'Coef. correlación (Pearson)'}}}}});
+
+new Chart(document.getElementById('chartJuecesMetrica'),{type:'bar',data:{labels:metricasJ,datasets:[
+  {label:'DeepEval (7b)',data:j_deepeval,backgroundColor:'#3b82f6'},
+  {label:'LangSmith (7b)',data:j_langsmith,backgroundColor:'#8b5cf6'},
+  {label:'Opik (7b)',data:j_opik,backgroundColor:'#6366f1'},
+  {label:'juez2-coder',data:j_coder,backgroundColor:'#a855f7'},
+  {label:'★ Gemini (ref)',data:j_gemini,backgroundColor:'#22c55e'}
+]},options:{scales:{y:{min:0,max:1}}}});
+
+// Tabla comparativa
+const lectura = ["Alta / media presentación","Debilidad: no explica motivo","Debilidad CRÍTICA: casi nunca pide permiso","Fortaleza: cierre cortés ante rechazo","Debilidad: casi nunca ofrece cita","DISCREPANCIA: Gemini alto vs qwen bajo","Fortaleza: tono cortés sostenido"];
+const rowsJ = metricasJ.map((m,i)=>{
+  const cols = [j_deepeval[i],j_langsmith[i],j_opik[i],j_coder[i],j_gemini[i]].map(v=>'<td>'+v.toFixed(2)+'</td>').join('');
+  return '<tr><td style="font-weight:600;color:#e2e8f0">'+m+'</td>'+cols+'<td style="color:#94a3b8;font-size:12px">'+lectura[i]+'</td></tr>';
+}).join('');
+document.getElementById('juecesTable').innerHTML = rowsJ;
 </script>
 </body>
 </html>
