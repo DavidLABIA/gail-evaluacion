@@ -5,17 +5,30 @@ Flujo:
   1. GET /v1/campaigns                       → lista todas las campañas del tenant.
   2. GET /v1/campaigns/{id}/touchpoints?includeTranscripts=true  → llama por llama (con transcript).
   3. Convierte los transcripts (role: user/assistant/tool_call) a turnos [CLIENTE]/[BOT]/[TOOL].
-  4. Guarda data/llamadas_gail.json — un array plano con metadata: campaign / contacto / outcome /
-     duration / publishedAt / finishedAt / touchpointId.
+  4. Etiqueta el ORIGEN de cada llamada (simulacion / prueba / real) según el nombre de campaña.
+  5. Guarda data/llamadas_gail.json — un array plano con metadata: campaign / contacto / outcome /
+     duration / publishedAt / finishedAt / touchpointId / origen.
 
 Manejo de rate limits:
   - El API puede bloquear con HTTP 401/429 tras ráfagas. Se aplica backoff exponencial
     (y congelamiento largo ante bloqueo persistente de 401) y se reanuda desde donde iba.
   - La lista de campañas ya exportadas se guarda en data/campañas_procesadas.json para no re-bajarlas.
 
+Origen del dato (GPS-438):
+  - En el tenant GAIL outbound actual TODAS las llamadas son simulación (generadas por IA).
+    Por defecto cada campaña se etiqueta `simulacion` salvo que contenga "real"/"prod"
+    en el nombre o se fuerce con --origen.
+  - --origen "<campaign_id>=real|prueba|simulacion>" sobreescribe por campaña (camino a producción).
+  - --origen-default cambia el valor por defecto para todo el tenant.
+
+Apagar transcripciones (GPS-438):
+  - Con --sin-transcriptos se exporta la metadata y el origen pero SIN guardar las transcripciones
+    (menos PII al pasar a producción). El pipeline de evaluación sigue corriendo sobre el subset
+    que ya fue exportado con transcript previo.
+
 Uso:
   export LULA_API_KEY="api-..."
-  .venv/bin/python gail_masivo/exportar_gail.py [--solo "nombre campaña"] [--fuerza]
+  .venv/bin/python gail_masivo/exportar_gail.py [--solo "nombre campaña"] [--fuerza] [--sin-transcriptos]
 """
 
 import argparse
@@ -37,6 +50,37 @@ BACKOFF_401 = 300       # segundos a esperar cuando el API devuelve 401 (bloqueo
 BACKOFF_429 = 60        # segundos a esperar cuando devuelve 429
 SLEEP_ENTRE_CAMPANAS = 2  # segundos entre campañas para no disparar el rate limit
 SLEEP_ENTRE_PAGINAS = 1  # segundos entre páginas de touchpoints
+
+# ─── Origen del dato (GPS-438) ────────────────────────────────────────
+# Para el tenant GAIL outbound, TODAS las llamadas son SIMULACIÓN (generadas
+# por IA, no tráfico real de clientes) mientras no haya producción. El default
+# es `simulacion`; cuando una campaña pase a producción real se marca con
+# --origen "<campaign_id>=real".
+ORIGEN_DEFAULT = "simulacion"
+
+# Patrones que forzan un origen distinto al default (se evalúan en orden:
+# especificidad decreciente). Un substring "real"/"prod" fuerza `real`.
+PATRONES_REAL = ["real", "prod", "produccion", "producción"]
+
+
+def clasificar_origen(campaign_name, campaign_id, overrides=None, default=None):
+    """Devuelve el origen ('real'|'prueba'|'simulacion') de una campaña.
+
+    Regla por nombre de campaña, sobreescribible por (campaign_id -> origen)
+    vía --origen. El default es ORIGEN_DEFAULT (simulacion), salvo que el nombre
+    indique claramente producción real.
+    """
+    if default is None:
+        default = ORIGEN_DEFAULT
+    if overrides and campaign_id in overrides:
+        return overrides[campaign_id]
+    n = str(campaign_name or "").lower()
+    if any(p in n for p in PATRONES_REAL):
+        return "real"
+    if cid := str(campaign_id or "").lower():
+        if cid in ("prod", "production", "produccion") or "real" in cid:
+            return "real"
+    return default
 
 
 def requester(url, api_key, reintentos=8):
@@ -116,7 +160,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solo", default=None, help="nombre (substring) de campaña a exportar")
     parser.add_argument("--fuerza", action="store_true", help="re-exportar campañas ya procesadas")
+    parser.add_argument("--sin-transcriptos", action="store_true",
+                        help="no guardar transcripciones (menos PII, para producción)")
+    parser.add_argument("--origen", action="append", default=[],
+                        help="sobreescribir origen: '<campaign_id>=<real|prueba|simulacion>'")
+    parser.add_argument("--origen-default", default=ORIGEN_DEFAULT,
+                        choices=["real", "prueba", "simulacion"],
+                        help=f"origen por defecto cuando no hay override/patrón. Default: {ORIGEN_DEFAULT}")
     args = parser.parse_args()
+
+    overrides = {}
+    for ov in args.origen:
+        if "=" in ov:
+            cid, org = ov.split("=", 1)
+            org = org.strip().lower()
+            if org not in ("real", "prueba", "simulacion"):
+                print(f"  ⚠ origen inválido '{org}' en --origen {ov}; se ignora", file=sys.stderr)
+                continue
+            overrides[cid.strip()] = org
 
     api_key = os.environ.get("LULA_API_KEY")
     if not api_key:
@@ -140,7 +201,8 @@ def main():
         if not args.fuerza and cid in procesadas:
             print(f"· ya procesada: {nombre}")
             continue
-        print(f"· exportando: {nombre!r} (id={cid})")
+        origen = clasificar_origen(nombre, cid, overrides, args.origen_default)
+        print(f"· exportando {nombre!r} (id={cid}) · origen={origen}")
         touchpoints = paginar_touchpoints(cid, api_key)
         con_transcript = 0
         for t in touchpoints:
@@ -152,17 +214,21 @@ def main():
             tid = t.get("touchpointId") or t.get("id")
             if t.get("errorMessage"):
                 continue
-            if not transcript and not t.get("conversationId"):
-                continue
-            turnos = a_turnos(transcript)
-            if not turnos:
-                continue
+            if args.sin_transcriptos:
+                turnos = []  # no guardar PII de transcripción
+            else:
+                if not transcript and not t.get("conversationId"):
+                    continue
+                turnos = a_turnos(transcript)
+                if not turnos:
+                    continue
             acc = t.get("additionalData") or {}
             metadata = {
                 "proyecto": "gail",
                 "flow": "outbound",
                 "campaign_id": cid,
                 "campaign": nombre,
+                "origen": origen,
                 "contacto": nombre_contacto,
                 "phone": t.get("phoneNumber"),
                 "outcome": outcome,
@@ -189,14 +255,21 @@ def main():
 
     json.dump(todas, open(SALIDA, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     totales = {}
+    por_origen = {}
     for t in todas:
         camp = t["metadata"]["campaign"]
         totales[camp] = totales.get(camp, 0) + 1
+        org = t["metadata"].get("origen", "real")
+        por_origen.setdefault(org, 0)
+        por_origen[org] += 1
     print(f"\nGuardadas {len(todas)} transcripciones en {SALIDA}")
     for camp, n in sorted(totales.items()):
         print(f"  - {camp}: {n} llamadas")
     con_turnos = sum(1 for t in todas if isinstance(t["transcripcion"], list) and t["transcripcion"])
     print(f"  ({con_turnos} con turnos [BOT]/[CLIENTE])")
+    print(f"\nPor origen: " + " · ".join(f"{org}={n}" for org, n in sorted(por_origen.items())))
+    if args.sin_transcriptos:
+        print("  [--sin-transcriptos] No se guardaron transcripciones (solo metadata).")
 
 
 if __name__ == "__main__":

@@ -102,6 +102,22 @@ def tabla_campanas(resumen):
     return "\n".join(rows)
 
 
+def _fecha(m):
+    for k in ("publishedAt", "finishedAt"):
+        t = str(m.get(k) or "")
+        if t:
+            import re as _re
+            mt = _re.match(r"^(\d{4}-\d{2}-\d{2})", t)
+            return mt.group(1) if mt else t[:10]
+    return ""
+
+
+def _badge_origen(org):
+    org = org or "simulacion"
+    cls = {"real": "badge-green", "prueba": "badge-yellow"}.get(org, "badge-purple")
+    return f'<span class="badge {cls}" style="text-transform:lowercase">{org}</span>'
+
+
 def tabla_llamadas(resultados):
     rows = []
     for r in resultados:
@@ -110,15 +126,19 @@ def tabla_llamadas(resultados):
         contacto = html_mod.escape(str(m.get("contacto", "")) or r["id"])
         out = html_mod.escape(str(m.get("outcome", "")))
         dur = int(m.get("duration") or 0)
+        org = html_mod.escape(str(m.get("origen", "simulacion")), quote=True)
+        fecha = _fecha(m)
         h = r["scores"]["heur"]
         l = r["scores"]["llm"]
         gh = sum(x["value"] for x in h.values()) / len(h)
         gl = sum(x["value"] for x in l.values()) / len(l)
         pos = any(t in str(m.get("outcome", "")).lower() for t in OUTCOMES_TOPE)
         rows.append(f"""
-        <tr style="border-bottom:1px solid #334155" data-camp="{camp}">
+        <tr style="border-bottom:1px solid #334155" data-camp="{camp}" data-org="{org}" data-fecha="{fecha}">
           <td style="padding:8px 12px;color:#f8fafc">{contacto}</td>
           <td style="padding:8px 12px;color:#94a3b8">{html_mod.escape(str(m.get("campaign","")))}</td>
+          <td style="padding:8px 12px">{_badge_origen(org)}</td>
+          <td style="padding:8px 12px;color:#94a3b8;font-size:12px">{fecha or "—"}</td>
           <td style="padding:8px 12px;color:#94a3b8;font-size:12px">{out}</td>
           <td style="padding:8px 12px;color:#94a3b8;font-size:12px">{dur}s</td>
           <td style="padding:8px 12px;text-align:center;font-size:13px">{"✅" if pos else "—"}</td>
@@ -149,6 +169,12 @@ def build(global_heur, global_llm, resumen, resultados, generado):
     pct_pos = porcentaje_outcomes(resultados)
     dur = duracion_prom(resultados)
     total_eval = n * 7 * 2  # 7 reglas heur + 7 reglas llm
+
+    por_origen = resumen.get("por_origen", {})
+    badges_origen = " ".join(
+        f'<span class="badge {"badge-green" if o=="real" else "badge-yellow" if o=="prueba" else "badge-purple"}" style="text-transform:lowercase">{o}: {d["n"]}</span>'
+        for o, d in sorted(por_origen.items())
+    )
 
     # datasets para chart.js
     heur_keys = [k for k, _, _, _ in MÉTRICAS]
@@ -219,7 +245,8 @@ td{{color:#e2e8f0}}
 <body>
 <div class="header">
 <h1>📞 GAIL VoiceBot · Evaluación Masiva con Llamadas Reales</h1>
-<p>{n} llamadas reales · {campañas} campañas outbound · 7 reglas heurísticas + 7 con juez LLM · qwen2.5:7b local · Generado {generado}</p>
+<p>{n} llamadas · {campañas} campañas outbound · 7 reglas heurísticas + 7 con juez LLM · qwen2.5:7b local · Generado {generado}</p>
+<p style="margin-top:6px">{badges_origen}</p>
 </div>
 
 <div class="container">
@@ -287,10 +314,16 @@ td{{color:#e2e8f0}}
 
 <!-- ═══════════ LLAMADAS ═══════════ -->
 <div id="calls" class="section">
+<div class="grid grid-3" style="margin-bottom:16px">
+<div><label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px">Origen: </label><select id="filtro-org" onchange="aplicarFiltros()"><option value="">Todos</option><option value="real">real</option><option value="prueba">prueba</option><option value="simulacion">simulacion</option></select></div>
+<div><label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px">Desde: </label><input type="date" id="filtro-fecha-ds" onchange="aplicarFiltros()"></div>
+<div><label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px">Hasta: </label><input type="date" id="filtro-fecha-hs" onchange="aplicarFiltros()"></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">Mostrando <b id="filtro-cnt"></b> llamadas.</div>
 <div class="card">
 <h3>📞 Detalle por Llamada ({n})</h3>
 <table>
-<thead><tr><th>Contacto</th><th>Campaña</th><th>Outcome</th><th>Duración</th><th>Positivo</th><th>Heur</th><th>LLM</th></tr></thead>
+<thead><tr><th>Contacto</th><th>Campaña</th><th>Origen</th><th>Fecha</th><th>Outcome</th><th>Duración</th><th>Positivo</th><th>Heur</th><th>LLM</th></tr></thead>
 <tbody>{tabla_llamadas(resultados)}</tbody>
 </table>
 </div>
@@ -340,6 +373,22 @@ td{{color:#e2e8f0}}
 <script>
 function showTab(id){{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');event.target.classList.add('active')}}
 
+function aplicarFiltros(){{
+  const org=document.getElementById('filtro-org').value;
+  const ds=document.getElementById('filtro-fecha-ds').value;
+  const hs=document.getElementById('filtro-fecha-hs').value;
+  let vis=0;
+  document.querySelectorAll('#calls tbody tr').forEach(tr=>{{
+    const torg=tr.dataset.org||'simulacion', tf=tr.dataset.fecha||'';
+    let ok = (!org||torg===org);
+    if(ok&&ds&&(!tf||tf<ds)) ok=false;
+    if(ok&&hs&&(!tf||tf>hs)) ok=false;
+    tr.style.display = ok?'':'none';
+    if(ok) vis++;
+  }});
+  document.getElementById('filtro-cnt').textContent = vis;
+}}
+
 function filtrarCampana(camp){{
   document.querySelectorAll('#calls tbody tr').forEach(tr=>{{
     tr.style.display = tr.dataset.camp === camp ? '' : 'none';
@@ -370,12 +419,13 @@ new Chart(document.getElementById('chartCamp'),{{type:'bar',data:{{labels:campNa
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--salida", default=os.path.join(AQUI, "GAIL_DASHBOARD.html"))
+    parser.add_argument("--fuente", default=FUENTE, help="archivo JSON de entrada (default: resultados_masivos.json)")
     args = parser.parse_args()
 
-    if not os.path.exists(FUENTE):
-        raise SystemExit(f"No existe {FUENTE}. Corré primero evaluar_masivo.py")
+    if not os.path.exists(args.fuente):
+        raise SystemExit(f"No existe {args.fuente}. Corré primero evaluar_masivo.py")
 
-    data = json.load(open(FUENTE, encoding="utf-8"))
+    data = json.load(open(args.fuente, encoding="utf-8"))
     if isinstance(data, list):
         resumen = {"n_llamadas": len(data), "por_campana": {}, "heur": {}, "llm": {},
                    "global_heur": 0, "global_llm": 0}

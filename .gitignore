@@ -12,6 +12,9 @@ env/
 gail_masivo/data/*.json
 gail_masivo/evaluacion/*.json
 
+# Dashboard interno con datos reales (NO publicar) · la versión pública es anonimizada
+*.privado.html
+
 # Logs
 *.log
 

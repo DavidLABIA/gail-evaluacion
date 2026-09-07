@@ -40,9 +40,41 @@ Lula API  →  exportar_gail.py  →  llamadas_gail.json  →  evaluar_masivo.py
 
 | Paso | Script | Salida |
 |---|---|---|
-| Descargar campañas + transcripciones | `exportar_gail.py` | `data/llamadas_gail.json` |
+| Descargar campañas + transcripciones | `exportar_gail.py` | `data/llamadas_gail.json` (con `origen`) |
 | Evaluar (heurísticas + juez LLM) | `evaluar_masivo.py` | `evaluacion/resultados_masivos.json` |
-| Generar dashboard | `generar_dashboard.py` | `index.html` |
+| Backfill origen + fechas | `backfill_origen_fechas.py` | `evaluacion/resultados_masivos.json` |
+| Enriquecer dashboard de jueces | `enriquecer_dashboard.py` | `dashboard-evaluacion-gail.html` |
+| Generar dashboard masivo | `generar_dashboard.py` | `GAIL_DASHBOARD.html` |
+
+## 🏷️ Origen del dato y filtros (GPS-438 / GPS-439)
+
+Cada llamada queda etiquetada con su **origen** (`simulacion` / `prueba` / `real`),
+lo que permite excluir simulaciones y analizar solo resultados reales o filtrar
+por rango de fechas en el análisis masivo.
+
+- **Origen por defecto `simulacion`**: en el tenant GAIL outbound actual todas las
+  llamadas son generadas por IA (no hay tráfico real de clientes).
+- **Sobreescribir por campaña** al exportar: `--origen "<campaign_id>=real"`,
+  `--origen "<campaign_id>=prueba"`.
+- **Default del tenant**: `--origen-default real|prueba|simulacion` (cuando el tenant
+  pase a producción).
+- Los dashboards (`dashboard-evaluacion-gail.html`, `GAIL_DASHBOARD.html`) tienen
+  **filtro por origen** y **filtro por rango de fechas** sobre la lista de llamadas,
+  con columna de origen y fecha por llamada.
+
+### Apagar transcripciones en producción (GPS-438)
+
+Con `--sin-transcriptos` el exportador guarda la metadata y el origen **sin**
+guardar las transcripciones (reduce PII al pasar a producción). El análisis se
+corre sobre el subset que ya fue exportado con transcript previo.
+
+```bash
+# Exportar SOLO metadata y origen, sin transcripciones (producción)
+LULA_API_KEY=... .venv/bin/python gail_masivo/exportar_gail.py --sin-transcriptos
+
+# Marcar una campaña concreta como producción real
+LULA_API_KEY=... .venv/bin/python gail_masivo/exportar_gail.py --origen "<campaign_id>=real"
+```
 
 ### 1. Exportar datos desde Lula
 ```bash
@@ -116,11 +148,29 @@ gail-evaluacion/
 
 ---
 
-## 🔐 Seguridad
+## 🔐 Seguridad y privacidad
+
 - La **API key de Lula** se pasa por variable de entorno (`LULA_API_KEY`), nunca hardcodeada.
-- El repositorio contiene **datos reales de llamadas** (transcripciones). Se suben
-  con fines de evaluación interna; avisar antes de hacer el repo público en caso
-  de datos sensibles de clientes.
+- Los JSON crudos de llamadas (`gail_masivo/data/*.json`, `gail_masivo/evaluacion/*.json`)
+  están en `.gitignore` y **no se suben** al repo.
+- Los dashboards **públicos** (`index.html`, `dashboard-evaluacion-gail.html`) se comprometen
+  **anonimizados**: los contactos pasan a `Contacto 001/002/...`, los teléfonos a `XXXX-XXXX`
+  y los IDs se truncan. Se conservan métricas, scores, campañas, origen y fechas para que la
+  demo sea completa sin exponer PII.
+- La versión interna con datos reales se guarda como `dashboard-evaluacion-gail.privado.html`
+  (también en `.gitignore`), solo en la máquina local.
+
+### Anonimizar antes de publicar
+```bash
+# 1. Generar JSON anonimizado
+.venv/bin/python gail_masivo/anonimizar_datos.py          # → evaluacion/resultados_anon.json
+
+# 2. Generar dashboard masivo público (raíz) desde el JSON anonimizado
+.venv/bin/python gail_masivo/generar_dashboard.py --fuente evaluacion/resultados_anon.json --salida index.html
+
+# 3. Anonimizar el dashboard de jueces (parte del original real)
+.venv/bin/python gail_masivo/anonimizar.py --input dashboard-evaluacion-gail.privado.html --output dashboard-evaluacion-gail.html
+```
 
 ---
 

@@ -35,6 +35,7 @@ EVAL_DIR = os.path.join(AQUI, "evaluacion")
 RESULTADOS = os.path.join(EVAL_DIR, "resultados_masivos.json")
 
 JUEZ_DEFECTO = "ollama/qwen2.5:7b"
+ORIGEN_DEFAULT = "simulacion"  # tenant GAIL outbound: todo simulación salvo override
 
 # ─────────────────────────── A. HEURÍSTICAS ───────────────────────────
 
@@ -371,9 +372,12 @@ def resumir(resultados):
         return {k: round(sum(v) / len(v), 3) for k, v in acc.items()} if acc else {}
 
     por_campana = {}
+    por_origen = {"simulacion": [], "prueba": [], "real": []}
     for r in resultados:
         camp = r["metadata"].get("campaign", "?")
         por_campana.setdefault(camp, []).append(r)
+        org = r["metadata"].get("origen", ORIGEN_DEFAULT)
+        por_origen.setdefault(org, []).append(r)
 
     res = {
         "n_llamadas": len(resultados),
@@ -383,7 +387,24 @@ def resumir(resultados):
         "global_heur": round(sum(_prom("heur").values()) / max(1, len(_prom("heur"))), 3),
         "global_llm": round(sum(_prom("llm").values()) / max(1, len(_prom("llm"))), 3),
         "por_campana": {},
+        "por_origen": {},
     }
+    for org, rrs in por_origen.items():
+        if not rrs:
+            continue
+        h = {}
+        for r in rrs:
+            for k, v in r["scores"].get("heur", {}).items():
+                h.setdefault(k, []).append(v["value"])
+        l = {}
+        for r in rrs:
+            for k, v in r["scores"].get("llm", {}).items():
+                l.setdefault(k, []).append(v["value"])
+        res["por_origen"][org] = {
+            "n": len(rrs),
+            "heur": {k: round(sum(v) / len(v), 3) for k, v in h.items()},
+            "llm": {k: round(sum(v) / len(v), 3) for k, v in l.items()},
+        }
     for camp, rrs in por_campana.items():
         h = {}
         for r in rrs:
@@ -411,6 +432,16 @@ def imprimir_resumen(res):
             print(f"\n{label}:")
             for k, v in sorted(data.items()):
                 print(f"  {k:28s} avg={v:.3f}")
+    if res.get("por_origen"):
+        print("\nPor origen:")
+        for org, d in sorted(res["por_origen"].items()):
+            h = d["heur"]
+            gh = round(sum(h.values()) / max(1, len(h)), 3) if h else 0
+            extra = ""
+            if d["llm"]:
+                gl = round(sum(d["llm"].values()) / max(1, len(d["llm"])), 3)
+                extra = f" · llm={gl:.3f}"
+            print(f"  {org:<12} n={d['n']:>4}  heur={gh:.3f}{extra}")
     if res["por_campana"]:
         print("\nPor campaña:")
         for camp, d in sorted(res["por_campana"].items(), key=lambda x: -x[1]["n"]):
